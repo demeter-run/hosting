@@ -9,6 +9,8 @@ type Request = {
 
 // TODO: Define if we need a separate id or we can use the timestamp as id
 
+
+
 export function getRequests(): Request[] {
     return [
         {

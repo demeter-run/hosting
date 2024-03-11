@@ -4,7 +4,6 @@ import { formatDate } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getCosts } from '~/server/cost.server';
 import { LineChart, Line, ResponsiveContainer, CartesianGrid, XAxis, YAxis } from 'recharts';
-// const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400}, ...];
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Cost - Demeter Hosting' }, { name: 'description', content: 'Cost - Demeter Hosting' }];
@@ -25,12 +24,12 @@ export default function Cost() {
         <>
             <h1 className="title-3xl">Costs</h1>
 
-            <div className="flex flex-col lg:flex-row gap-4 mt-4">
+            <div className="flex flex-col lg:flex-row gap-8 mt-4">
                 <div className="content-wrapper p-4">
                     <div className="font-mono font-semibold mb-4">Requests</div>
                     <ResponsiveContainer width="100%" height={200}>
                         <LineChart data={costs} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                            <Line type="linear" dataKey="requestsCount" stroke="#4f46e5" />
+                            <Line type="linear" dataKey="requests" stroke="#4f46e5" />
                             <CartesianGrid stroke="#e6e6e6" strokeDasharray="5 5" />
                             <XAxis
                                 dataKey="timestamp"
@@ -88,7 +87,7 @@ export default function Cost() {
                         {costs.map(c => (
                             <tr key={c.id} className="table-tr">
                                 <td className="table-td">{formatDate(new Date(c.timestamp), 'medium', 'short')}</td>
-                                <td className="table-td text-right">{c.requestsCount.toLocaleString('en-US')}</td>
+                                <td className="table-td text-right">{c.requests.toLocaleString('en-US')}</td>
                                 <td className="table-td text-right">{c.dcus.toLocaleString('en-US')}</td>
                             </tr>
                         ))}
