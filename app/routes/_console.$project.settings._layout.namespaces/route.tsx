@@ -42,9 +42,14 @@ export default function Namespaces() {
                             </div>
 
                             <div className="md:ml-auto">
-                                <button className="btn-secondary-mini text-nowrap" type="button">
-                                    Explore transaction
-                                </button>
+                                <a
+                                    href={`https://beta.explorer.cardano.org/en/transaction/${n.hash}`}
+                                    className="btn-secondary-mini text-nowrap inline-flex"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    See transaction
+                                </a>
                             </div>
                         </div>
                     ))
