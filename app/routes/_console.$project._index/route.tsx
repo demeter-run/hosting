@@ -1,9 +1,10 @@
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { CopyBlock, dracula } from 'react-code-blocks';
+import { ClientOnly } from 'remix-utils/client-only';
 import FRONTEND_TEMPLATES from '~/data/frontend-templates';
 import { BranchIcon, CommitIcon } from '~/fragments/icons';
-import { formatDate } from '~/helpers/date';
+import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getProdBuild } from '~/server/builds.server';
 
@@ -25,6 +26,7 @@ export default function Dashboard() {
     return (
         <>
             <h1 className="title-3xl">Production build</h1>
+
             <div className="content-wrapper mt-4 px-4 py-6 flex flex-col md:flex-row gap-8">
                 <div className="flex flex-col lg:flex-row flex-[2_2_0%] gap-8">
                     <div className="flex-1">
@@ -34,15 +36,17 @@ export default function Dashboard() {
                         <div className="tag-green">{prodBuild.status}</div>
                         <div className="label-1 mt-3">Providers</div>
                         <table className="mt-1">
-                            {prodBuild.providers.map(provider => (
-                                <tr key={provider.id}>
-                                    <td className="">
-                                        <img className="w-5" src={provider.logo} alt={provider.name} />
-                                    </td>
-                                    <td className="text-sm px-2 py-1">{provider.name}</td>
-                                    <td className="text-sm">{provider.location}</td>
-                                </tr>
-                            ))}
+                            <tbody>
+                                {prodBuild.providers.map(provider => (
+                                    <tr key={provider.id}>
+                                        <td className="">
+                                            <img className="w-5" src={provider.logo} alt={provider.name} />
+                                        </td>
+                                        <td className="text-sm px-2 py-1">{provider.name}</td>
+                                        <td className="text-sm">{provider.location}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
                         </table>
 
                         <div className="label-1 mt-3">Active features</div>
@@ -55,7 +59,6 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </div>
-
                 <div className="flex-1">
                     <div className="label-1">Domains</div>
                     <div className="text-base">namespace.io namespace.demeter.host</div>
@@ -65,7 +68,7 @@ export default function Dashboard() {
 
                     <div className="label-1 mt-3">Created</div>
                     <div className="text-base">
-                        {formatDate(new Date(prodBuild.timestamp), 'medium', 'short')} by {prodBuild.author}
+                        {formatDateClient(new Date(prodBuild.timestamp), 'medium', 'short')} by {prodBuild.author}
                     </div>
 
                     <div className="label-1 mt-3">Source</div>
@@ -90,9 +93,8 @@ export default function Dashboard() {
             </div>
 
             <h1 className="title-3xl mt-8">Getting started</h1>
-
             <h1 className="title-xl mt-8">Configure Github action</h1>
-            <MyCodeComponent />
+            <ClientOnly>{() => <MyCodeComponent />}</ClientOnly>
 
             <h2 className="title-xl mt-8">Or get started with a template</h2>
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -105,7 +107,6 @@ export default function Dashboard() {
                     </div>
                 ))}
             </div>
-
             {/* <div className="mt-4">
                 <label htmlFor="input-label" className="label-form">
                     Git repository URL
@@ -125,7 +126,7 @@ export default function Dashboard() {
 function MyCodeComponent() {
     return (
         <div className="border border-gray-50 rounded-lg mt-4 font-mono">
-            <CopyBlock language="yaml" text={languageDemo} showLineNumbers={true} theme={dracula} codeBlock />
+            <CopyBlock language="yaml" text={languageDemo} showLineNumbers={true} theme={dracula} codeBlock={true} />
         </div>
     );
 }

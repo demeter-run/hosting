@@ -2,13 +2,13 @@ import { NavLink } from '@remix-run/react';
 
 export default function Navbar() {
     return (
-        <header className="wrapper">
+        <header className="wrapper flex sm:flex-col items-center sm:items-start">
             <div className="h-16 flex items-center">
                 <a className="flex items-center" href="/">
                     <img className="w-5" src="/assets/logos/demeter-isotype-black.svg" alt="Demeter" />
                     <div className="text-xl ml-1 font-semibold">Hosting</div>
                 </a>
-                <div className="hs-dropdown relative inline-flex ml-10">
+                <div className="hs-dropdown relative inline-flex ml-4 sm:ml-10">
                     <button
                         id="hs-dropdown-default"
                         type="button"
@@ -50,11 +50,9 @@ export default function Navbar() {
                         </a>
                     </div>
                 </div>
-
-                <div className="ml-auto"></div>
             </div>
 
-            <div className="flex items-center h-10">
+            <div className="sm:flex sm:items-center sm:w-auto h-8 sm:h-10 ml-4 sm:ml-0 sm:mr-0 relative">
                 <div className="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white dark:bg-gray-800">
                     <nav className="max-w-[85rem] w-full sm:flex sm:items-center sm:justify-between" aria-label="Global">
                         <div className="flex items-center justify-between">
@@ -102,7 +100,7 @@ export default function Navbar() {
                         </div>
                         <div
                             id="navbar-collapse-with-animation"
-                            className="hs-collapse hidden text-sm overflow-hidden transition-all duration-300 basis-full grow sm:block"
+                            className="hs-collapse hidden text-sm overflow-hidden transition-all duration-300 basis-full grow sm:block pl-6 pr-6 pb-6 sm:p-0 border-gray-50 border-b border-l border-r sm:border-none rounded-b-md sm:rounded-none bg-white dark:bg-gray-800 mt-4 sm:mt-0"
                         >
                             <div className="flex flex-col gap-8 mt-5 sm:flex-row sm:items-center sm:mt-0">
                                 {NAV_MENU.map(item => (

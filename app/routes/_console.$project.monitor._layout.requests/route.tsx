@@ -1,6 +1,6 @@
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { formatDate } from '~/helpers/date';
+import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getRequests } from '~/server/requests.server';
 
@@ -36,7 +36,7 @@ export default function Requests() {
                     <tbody className="table-body">
                         {requests.map(r => (
                             <tr key={r.id} className="table-tr">
-                                <td className="table-td">{formatDate(new Date(r.timestamp), 'medium', 'short')}</td>
+                                <td className="table-td">{formatDateClient(new Date(r.timestamp), 'medium', 'short')}</td>
                                 <td className="table-td">{r.status}</td>
                                 <td className="table-td">{r.host}</td>
                                 <td className="table-td">{r.request}</td>

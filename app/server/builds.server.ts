@@ -36,7 +36,7 @@ export function getBuilds(): Build[] {
             commit: 'ad34eab',
             message: 'initial commit',
             author: 'John Doe',
-            timestamp: '2024-01-01T08:10:00.000Z',
+            timestamp: 1609593559000,
             current: false,
         },
     ];

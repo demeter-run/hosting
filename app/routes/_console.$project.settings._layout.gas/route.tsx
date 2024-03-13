@@ -1,6 +1,6 @@
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { formatDate } from '~/helpers/date';
+import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getLedger } from '~/server/gas.server';
 
@@ -65,8 +65,8 @@ export default function Gas() {
                     <tbody className="table-body">
                         {ledger.map(l => (
                             <tr key={l.id} className="table-tr">
-                                <td className="table-td">{formatDate(new Date(l.from), 'short', 'short')}</td>
-                                <td className="table-td">{formatDate(new Date(l.to), 'short', 'short')}</td>
+                                <td className="table-td">{formatDateClient(new Date(l.from), 'short', 'short')}</td>
+                                <td className="table-td">{formatDateClient(new Date(l.to), 'short', 'short')}</td>
                                 <td className="table-td">{l.provider}</td>
                                 <td className="table-td text-right">{l.requests.toLocaleString('en-US')}</td>
                                 <td className="table-td text-right">{l.dcus.toLocaleString('en-US')}</td>

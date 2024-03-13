@@ -1,6 +1,6 @@
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { formatDate } from '~/helpers/date';
+import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getNamespaces } from '~/server/namespaces.server';
 
@@ -37,7 +37,7 @@ export default function Namespaces() {
                                 </div>
                                 <div className="lg:w-48">
                                     <div className="label-1">Minted</div>
-                                    <div className="">{formatDate(new Date(n.timestamp), 'medium', 'short')}</div>
+                                    <div className="">{formatDateClient(new Date(n.timestamp), 'medium', 'short')}</div>
                                 </div>
                             </div>
 
