@@ -30,14 +30,6 @@ export function getRequests(): Request[] {
             message: 'GET / 200 3ms',
         },
         {
-            id: 2,
-            timestamp: 1708582559000,
-            status: 'success',
-            host: 'demeter.host',
-            request: 'GET /',
-            message: 'GET / 200 3ms',
-        },
-        {
             id: 3,
             timestamp: 1708582559000,
             status: 'success',

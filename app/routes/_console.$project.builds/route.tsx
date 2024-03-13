@@ -1,7 +1,7 @@
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { BranchIcon, CommitIcon } from '~/fragments/icons';
-import { formatDate } from '~/helpers/date';
+import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getBuilds } from '~/server/builds.server';
 
@@ -54,7 +54,7 @@ export default function Builds() {
 
                             <div className="md:ml-auto flex md:items-center flex-col md:flex-row gap-3">
                                 <div className="text-sm md:text-right text-nowrap">
-                                    {formatDate(new Date(b.timestamp), 'medium', 'short')} by {b.author}
+                                    {formatDateClient(new Date(b.timestamp), 'medium', 'short')} by {b.author}
                                 </div>
                                 <div className="w-36 flex md:justify-end">
                                     {b.current ? (

@@ -1,6 +1,6 @@
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { formatDate } from '~/helpers/date';
+import { formatDate, formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getCosts } from '~/server/cost.server';
 import { LineChart, Line, ResponsiveContainer, CartesianGrid, XAxis, YAxis } from 'recharts';
@@ -86,7 +86,7 @@ export default function Cost() {
                     <tbody className="table-body">
                         {costs.map(c => (
                             <tr key={c.id} className="table-tr">
-                                <td className="table-td">{formatDate(new Date(c.timestamp), 'medium', 'short')}</td>
+                                <td className="table-td">{formatDateClient(new Date(c.timestamp), 'medium', 'short')}</td>
                                 <td className="table-td text-right">{c.requests.toLocaleString('en-US')}</td>
                                 <td className="table-td text-right">{c.dcus.toLocaleString('en-US')}</td>
                             </tr>
