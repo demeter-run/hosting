@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 export default {
-    content: ['./app/**/*.{js,jsx,ts,tsx}', './node_modules/preline/preline.js'],
+    content: ['./app/**/*.{js,jsx,ts,tsx}'],
     darkMode: 'class',
     theme: {
         transitionDuration: {
@@ -43,11 +43,11 @@ export default {
                 // accent2: '#065f46', // emerald 800
                 accent1: '#4f46e5', // indigo 600
                 accent2: '#3730a3', // indigo 800
-                green1: '#44D163',
+                green1: '#15803d',
                 red1: '#ef4444',
                 yellow1: '#F5BC29',
             },
         },
     },
-    plugins: [require('preline/plugin'), require('@tailwindcss/forms')],
+    plugins: [],
 } satisfies Config;

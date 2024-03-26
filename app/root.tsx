@@ -1,28 +1,6 @@
 import type { LinksFunction } from '@remix-run/node';
-import {
-    Link,
-    Links,
-    LiveReload,
-    Meta,
-    Outlet,
-    Scripts,
-    ScrollRestoration,
-    isRouteErrorResponse,
-    useLocation,
-    useRouteError,
-} from '@remix-run/react';
-import { useEffect } from 'react';
+import { Link, Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, useRouteError } from '@remix-run/react';
 import styles from './tailwind.css';
-import { type IStaticMethods } from 'preline/preline';
-
-declare global {
-    interface Window {
-        HSStaticMethods: IStaticMethods;
-    }
-}
-if (typeof window !== 'undefined') {
-    require('preline/preline');
-}
 
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: styles },
@@ -34,12 +12,6 @@ export const links: LinksFunction = () => [
 ];
 
 export default function App() {
-    const location = useLocation();
-
-    useEffect(() => {
-        window.HSStaticMethods.autoInit();
-    }, [location.pathname]);
-
     return (
         <html lang="en" className="">
             <head>
