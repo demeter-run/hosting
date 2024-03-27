@@ -22,11 +22,11 @@ export function getTxCbor(namespace: string, address: string): Promise<string> {
 
 export function getTxStatus(hash: string): Promise<'pending' | 'confirmed' | 'expired'> {
     console.log(hash);
-    const statuses = ['pending', 'confirmed', 'expired'];
+    // const statuses = ['pending', 'confirmed', 'expired'];
     return new Promise(resolve => {
         setTimeout(() => {
-            resolve(statuses[Math.floor(Math.random() * statuses.length)]);
-            // resolve('pending');
+            // resolve(statuses[Math.floor(Math.random() * statuses.length)]);
+            resolve('pending');
         }, 1000);
     });
 }

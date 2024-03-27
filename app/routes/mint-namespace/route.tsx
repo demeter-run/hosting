@@ -145,26 +145,25 @@ export default function MintNamespace() {
         let signedTx: string;
         let txHash: string;
         // Sign transaction with wallet TODO: Uncomment when implemented
-        // try {
-        //     signedTx = await wallet?.signTx(txCbor);
-        // } catch (error) {
-        //     console.error('Error signing transaction:', error);
-        //     setStep('fail');
-        //     return;
-        // }
-        // console.log('Signed transaction:', signedTx);
+        try {
+            signedTx = await wallet?.signTx(txCbor);
+        } catch (error) {
+            console.error('Error signing transaction:', error);
+            setStep('fail');
+            return;
+        }
+        console.log('Signed transaction:', signedTx);
         // Send signed transaction to the network TODO: Uncomment when implemented
-        // try {
-        //     txHash = await wallet?.submitTx(signedTx);
-        // } catch (error) {
-        //     console.error('Error submitting transaction:', error);
-        //     setStep('fail');
-        //     return;
-        // }
-        // console.log('Transaction hash:', txHash);
-        navigate(`/mint-namespace?hash=53c44b2f2a8622fbcbf3a8e44cf7479e9cb4e17f5d223b79a7c4ec9cf8c9ffbb`);
-        // TODO: Uncomment when implemented
-        // navigate(`/mint-namespace?hash=${txHash}`);
+        try {
+            txHash = await wallet?.submitTx(signedTx);
+        } catch (error) {
+            console.error('Error submitting transaction:', error);
+            setStep('fail');
+            return;
+        }
+        console.log('Transaction hash:', txHash);
+        // navigate(`/mint-namespace?hash=53c44b2f2a8622fbcbf3a8e44cf7479e9cb4e17f5d223b79a7c4ec9cf8c9ffbb`);
+        navigate(`/mint-namespace?hash=${txHash}`);
     };
 
     // If wallets is not connected prevents page rendering and shows a wallet not found message with CTA for connecting wallet
