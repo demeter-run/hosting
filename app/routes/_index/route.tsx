@@ -1,20 +1,72 @@
-import type { MetaFunction } from '@remix-run/node';
-import { Link } from '@remix-run/react';
-import { useState } from 'react';
-import { useConnectWallet, WalletModal } from '@newm.io/cardano-dapp-wallet-connector';
+import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
+import { Link, json, useFetcher } from '@remix-run/react';
+import { useEffect, useState } from 'react';
+import { getWalletAddress, useConnectWallet, WalletModal } from '@newm.io/cardano-dapp-wallet-connector';
 import { LogoHover } from '~/fragments/icons';
+import ModalSelectProject from './modal-select-project';
+import { Namespace, getNamespaces } from '~/server/mint.server';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Demeter Hosting' }, { name: 'description', content: 'Demeter Hosting' }];
 };
 
+export async function action({ request }: ActionFunctionArgs) {
+    const data = await request.formData();
+    const intent = data.get('intent') as string;
+
+    // Gets namespaces for the wallet address
+    if (intent === 'get_namespaces') {
+        const address = data.get('address') as string;
+        const namespaces = await getNamespaces(address);
+        return json({ intent, namespaces });
+    }
+}
+
 export default function Index() {
     const { wallet } = useConnectWallet();
+    const fetcher = useFetcher();
+    const [walletAddress, setWalletAddress] = useState('');
     const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+    const [isSelectProjectOpen, setIsSelectProjectOpen] = useState(false);
+    const [namespaces, setNamespaces] = useState<Namespace[]>([]);
+
+    // Listens for server side responses from fetcher and updates state accordingly
+    useEffect(() => {
+        if (fetcher.data) {
+            let namespaces: Namespace[] = [];
+            switch ((fetcher.data as { intent: string }).intent) {
+                case 'get_namespaces':
+                    namespaces = (fetcher.data as { intent: string; namespaces: Namespace[] }).namespaces;
+                    setNamespaces(namespaces);
+                    break;
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fetcher.data]);
+
+    // Fetches wallet address data on wallet connection
+    useEffect(() => {
+        async function fetchData() {
+            if (wallet) {
+                const address = await getWalletAddress(wallet);
+                setWalletAddress(address);
+            }
+        }
+        fetchData();
+    }, [wallet]);
+
+    // Triggers namespace fetch from server on wallet address change
+    useEffect(() => {
+        if (walletAddress) {
+            fetcher.submit({ intent: 'get_namespaces', address: walletAddress }, { method: 'POST' });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [walletAddress]);
 
     return (
         <>
             <WalletModal isOpen={isWalletModalOpen} onClose={() => setIsWalletModalOpen(false)} />
+            <ModalSelectProject isSelectProjectOpen={isSelectProjectOpen} setIsSelectProjectOpen={setIsSelectProjectOpen} namespaces={namespaces} />
 
             {/* Navbar */}
             <header className="h-20 w-full fixed top-0 right-0 z-30 bg-white/90 backdrop-blur-sm">
@@ -69,9 +121,17 @@ export default function Index() {
                             Connect wallet to get started
                         </button>
                     ) : (
-                        <Link className="btn-primary-large mt-8" to="/mint-namespace">
-                            Mint your namespace
-                        </Link>
+                        <>
+                            {namespaces.length > 0 ? (
+                                <button className="btn-primary-large mt-8" onClick={() => setIsSelectProjectOpen(true)}>
+                                    Select project
+                                </button>
+                            ) : (
+                                <Link className="btn-primary-large mt-8" to="/mint-namespace">
+                                    Mint your namespace
+                                </Link>
+                            )}
+                        </>
                     )}
 
                     <div className="flex gap-6 mt-4">

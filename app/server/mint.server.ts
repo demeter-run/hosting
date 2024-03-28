@@ -30,3 +30,39 @@ export function getTxStatus(hash: string): Promise<'pending' | 'confirmed' | 'ex
         }, 1000);
     });
 }
+
+export type Namespace = {
+    policyId: string;
+    name: string;
+    timestamp: string | number;
+    hash: string;
+};
+
+export function getNamespaces(address: string): Promise<Namespace[]> {
+    console.log(address);
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve([
+                {
+                    policyId: 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a',
+                    name: 'apollo',
+                    timestamp: 1609593559000,
+                    hash: 'f4767f352e8c6985c5da055b98dfb8f4cf456830acc809fc7ffc8676c2175e95',
+                },
+                {
+                    policyId: 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a',
+                    name: 'artemis',
+                    timestamp: 1609593559000,
+                    hash: 'f4767f352e8c6985c5da055b98dfb8f4cf456830acc809fc7ffc8676c2175e95',
+                },
+                {
+                    policyId: 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a',
+                    name: 'zeus',
+                    timestamp: 1609593559000,
+                    hash: 'f4767f352e8c6985c5da055b98dfb8f4cf456830acc809fc7ffc8676c2175e95',
+                },
+            ]);
+            // resolve([]);
+        }, 1000);
+    });
+}

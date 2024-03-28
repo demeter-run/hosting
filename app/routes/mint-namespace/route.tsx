@@ -62,7 +62,7 @@ export default function MintNamespace() {
     const [txCbor, setTxCbor] = useState('');
     const { txHash, txStatus } = useLoaderData<typeof loader>();
 
-    // Fetches wallet info on wallet connection
+    // Fetches wallet data on wallet connection
     useEffect(() => {
         async function fetchData() {
             if (wallet) {
@@ -204,7 +204,7 @@ export default function MintNamespace() {
                 {step === 'search' && (
                     <div className="grid grid-cols-2 gap-16">
                         <div className="">
-                            <h2 className="text-xl font-medium">Secure your namespace</h2>
+                            <h2 className="text-xl font-medium">Mint your namespace</h2>
                             <input
                                 className="form-input mt-4"
                                 type="search"
