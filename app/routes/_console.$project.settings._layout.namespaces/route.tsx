@@ -2,14 +2,14 @@ import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
-import { getNamespaces } from '~/server/namespaces.server';
+import { getNamespaces } from '~/server/mint.server';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Namespaces - Demeter Hosting' }, { name: 'description', content: 'Namespaces - Demeter Hosting' }];
 };
 
 export async function loader() {
-    const namespaces = getNamespaces();
+    const namespaces = await getNamespaces('f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a');
 
     invariant(namespaces, 'Failed to load namespaces data');
 
