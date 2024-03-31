@@ -10,9 +10,7 @@ export const meta: MetaFunction = () => {
 
 export async function loader() {
     const namespaces = await getNamespaces('f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a');
-
     invariant(namespaces, 'Failed to load namespaces data');
-
     return json({ namespaces });
 }
 
@@ -21,9 +19,9 @@ export default function Namespaces() {
 
     return (
         <>
-            <h1 className="title-3xl">Namespaces</h1>
+            <h1 className="title-3xl">Namespace</h1>
             <div className="content-wrapper mt-4">
-                {namespaces.length ? (
+                {namespaces && namespaces.length ? (
                     namespaces.map(n => (
                         <div
                             key={n.policyId}

@@ -1,6 +1,8 @@
-import { NavLink } from '@remix-run/react';
+import { NavLink, useParams } from '@remix-run/react';
 
 export default function Navbar() {
+    const project = useParams().project;
+
     return (
         <header className="wrapper flex sm:flex-col items-center sm:items-start">
             <div className="h-16 flex items-center">
@@ -103,7 +105,7 @@ export default function Navbar() {
                             className="hs-collapse hidden text-sm overflow-hidden transition-all duration-300 basis-full grow sm:block pl-6 pr-6 pb-6 sm:p-0 border-gray-50 border-b border-l border-r sm:border-none rounded-b-md sm:rounded-none bg-white dark:bg-gray-800 mt-4 sm:mt-0"
                         >
                             <div className="flex flex-col gap-8 mt-5 sm:flex-row sm:items-center sm:mt-0">
-                                {NAV_MENU.map(item => (
+                                {getMenu(project).map(item => (
                                     <NavLink
                                         key={item.to}
                                         to={item.to}
@@ -127,22 +129,24 @@ export default function Navbar() {
     );
 }
 
-const NAV_MENU = [
-    {
-        title: 'Dashboard',
-        to: '/project',
-        end: true,
-    },
-    {
-        title: 'Builds',
-        to: '/project/builds',
-    },
-    {
-        title: 'Monitor',
-        to: '/project/monitor',
-    },
-    {
-        title: 'Settings',
-        to: '/project/settings',
-    },
-];
+function getMenu(project: string | undefined) {
+    return [
+        {
+            title: 'Dashboard',
+            to: `/${project}`,
+            end: true,
+        },
+        {
+            title: 'Builds',
+            to: `/${project}/builds`,
+        },
+        {
+            title: 'Monitor',
+            to: `/${project}/monitor`,
+        },
+        {
+            title: 'Settings',
+            to: `/${project}/settings`,
+        },
+    ];
+}
