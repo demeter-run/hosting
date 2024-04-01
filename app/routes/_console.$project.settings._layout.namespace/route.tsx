@@ -1,5 +1,5 @@
 import { json, type MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
 import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getNamespaces } from '~/server/mint.server';
@@ -20,42 +20,64 @@ export default function Namespaces() {
     return (
         <>
             <h1 className="title-3xl">Namespace</h1>
+
+            <div className="content-wrapper mt-4 px-4 py-6">
+                <div className="flex flex-col lg:flex-row gap-8 lg:justify-between lg:items-center w-full">
+                    <div className="lg:w-3/4">
+                        <div className="text-4xl font-semibold">{namespaces[0].name}</div>
+                        <div className="label-1 mt-8">Minted</div>
+                        <div className="">{formatDateClient(new Date(namespaces[0].timestamp), 'medium', 'short')}</div>
+                        <div className="label-1 mt-4">Address</div>
+                        <div className="break-words">{namespaces[0].address}</div>
+                        <div className="label-1 mt-4">Policy id</div>
+                        <div className="break-words">{namespaces[0].policyId}</div>
+                    </div>
+                    <a
+                        href={`https://beta.explorer.cardano.org/en/transaction/${namespaces[0].hash}`}
+                        className="btn-secondary-mini text-nowrap inline-flex flex-none"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        See transaction
+                    </a>
+                </div>
+            </div>
+
+            <h1 className="title-3xl mt-8">Aliases</h1>
+
             <div className="content-wrapper mt-4">
                 {namespaces && namespaces.length ? (
                     namespaces.map(n => (
                         <div
-                            key={n.policyId}
-                            className="border-b border-gray-100 last:border-b-0 p-4 flex flex-col md:flex-row md:items-center gap-3"
+                            key={n.name}
+                            className="border-b border-gray-100 last:border-b-0 p-4 flex flex-col lg:flex-row gap-8 lg:justify-between lg:items-center"
                         >
-                            <div className="flex w-full flex-col lg:flex-row lg:items-center gap-4">
-                                <div className="lg:w-40 font-semibold">{n.name}</div>
-                                <div className="lg:w-40">
-                                    <div className="label-1">Policy id</div>
-                                    <div className="">{n.policyId}</div>
-                                </div>
-                                <div className="lg:w-48">
-                                    <div className="label-1">Minted</div>
-                                    <div className="">{formatDateClient(new Date(n.timestamp), 'medium', 'short')}</div>
-                                </div>
+                            <div className="w-3/4">
+                                <div className="text-xl font-semibold">{n.name}</div>
+                                <div className="label-1 mt-4">Minted</div>
+                                <div className="">{formatDateClient(new Date(n.timestamp), 'medium', 'short')}</div>
+                                <div className="label-1 mt-4">Address</div>
+                                <div className="break-words">{n.address}</div>
+                                <div className="label-1 mt-4">Policy id</div>
+                                <div className="break-words">{n.policyId}</div>
                             </div>
-
-                            <div className="md:ml-auto">
-                                <a
-                                    href={`https://beta.explorer.cardano.org/en/transaction/${n.hash}`}
-                                    className="btn-secondary-mini text-nowrap inline-flex"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                >
-                                    See transaction
-                                </a>
-                            </div>
+                            <a
+                                href={`https://beta.explorer.cardano.org/en/transaction/${n.hash}`}
+                                className="btn-secondary-mini text-nowrap inline-flex"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                See transaction
+                            </a>
                         </div>
                     ))
                 ) : (
                     <div className="p-6 flex items-center justify-center text-gray-600">Your namespaces will appear here</div>
                 )}
             </div>
-            <button className="btn-primary mt-8">Mint new namespace</button>
+            <Link className="btn-primary mt-8" to="/mint-namespace">
+                Mint new alias
+            </Link>
         </>
     );
 }
