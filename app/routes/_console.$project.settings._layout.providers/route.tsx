@@ -8,8 +8,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader() {
-    const providers = getProviders();
-
+    const providers = await getProviders();
     invariant(providers, 'Failed to load providers data');
 
     return json({ providers });
@@ -47,7 +46,7 @@ export default function Providers() {
                         <div className="font-medium">{p.location}</div>
                         <div className="label-1 mt-4">Features</div>
                         <div className="flex flex-wrap gap-3 mt-2">
-                            {p.features.map((f, i) => (
+                            {p.features?.map((f, i) => (
                                 <div key={i} className="tag-accent1">
                                     {f}
                                 </div>

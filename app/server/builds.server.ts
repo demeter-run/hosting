@@ -42,7 +42,7 @@ export function getBuilds(): Promise<Build[]> {
                     current: false,
                 },
             ]);
-        }, 5000);
+        }, 1000);
     });
 }
 
@@ -60,31 +60,35 @@ type ProdBuild = {
     activeFeatures: string[];
 };
 
-export function getProdBuild(): ProdBuild {
-    return {
-        id: 1,
-        branch: 'main',
-        commit: 'aefe63c',
-        message: 'updated ui components',
-        author: 'John Doe',
-        timestamp: 1609593559000,
-        current: true,
-        screenshot: '/assets/graphics/website-screenshot-fpo.png',
-        status: 'live',
-        providers: [
-            {
+export function getProdBuild(): Promise<ProdBuild> {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve({
                 id: 1,
-                name: 'TxPipe',
-                location: 'US Central',
-                logo: '/assets/logos/txpipe.svg',
-            },
-            {
-                id: 2,
-                name: 'Blink Labs',
-                location: 'US Central',
-                logo: '/assets/logos/blink-labs.svg',
-            },
-        ],
-        activeFeatures: ['Cardano Node', 'DB-Sync', 'Ogmios', 'Kupo', 'Blockfrost RYO'],
-    };
+                branch: 'main',
+                commit: 'aefe63c',
+                message: 'updated ui components',
+                author: 'John Doe',
+                timestamp: 1609593559000,
+                current: true,
+                screenshot: '/assets/graphics/website-screenshot-fpo.png',
+                status: 'live',
+                providers: [
+                    {
+                        id: 1,
+                        name: 'TxPipe',
+                        location: 'US Central',
+                        logo: '/assets/logos/txpipe.svg',
+                    },
+                    {
+                        id: 2,
+                        name: 'Blink Labs',
+                        location: 'US Central',
+                        logo: '/assets/logos/blink-labs.svg',
+                    },
+                ],
+                activeFeatures: ['Cardano Node', 'DB-Sync', 'Ogmios', 'Kupo', 'Blockfrost RYO'],
+            });
+        }, 1000);
+    });
 }

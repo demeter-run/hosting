@@ -13,7 +13,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader() {
-    const prodBuild = getProdBuild();
+    const prodBuild = await getProdBuild();
 
     invariant(prodBuild, 'Failed to load production build data.');
 

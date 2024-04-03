@@ -2,19 +2,17 @@ import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
-import { getLedger } from '~/server/gas.server';
+import { getBalance, getLedger } from '~/server/gas.server';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Gas - Demeter Hosting' }, { name: 'description', content: 'Gas - Demeter Hosting' }];
 };
 
 export async function loader() {
-    const ledger = getLedger();
-
+    const ledger = await getLedger();
     invariant(ledger, 'Failed to load ledger data');
 
-    const balance = 123456789;
-
+    const balance = await getBalance();
     invariant(balance, 'Failed to load balance data');
 
     return json({ ledger, balance });
