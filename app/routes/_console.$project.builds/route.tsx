@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader() {
-    const builds = getBuilds();
+    const builds = await getBuilds();
 
     invariant(builds, 'Failed to load builds');
 

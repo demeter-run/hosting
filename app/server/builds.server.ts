@@ -10,36 +10,40 @@ type Build = {
     current: boolean;
 };
 
-export function getBuilds(): Build[] {
-    return [
-        {
-            id: 1,
-            branch: 'main',
-            commit: 'aefe63c',
-            message: 'updated ui components',
-            author: 'John Doe',
-            timestamp: 1709593559000,
-            current: true,
-        },
-        {
-            id: 2,
-            branch: 'main',
-            commit: 'ab0057ee',
-            message: 'fixed app crashing all the time',
-            author: 'Jane Doe',
-            timestamp: 1609593559000,
-            current: false,
-        },
-        {
-            id: 3,
-            branch: 'main',
-            commit: 'ad34eab',
-            message: 'initial commit',
-            author: 'John Doe',
-            timestamp: 1609593559000,
-            current: false,
-        },
-    ];
+export function getBuilds(): Promise<Build[]> {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve([
+                {
+                    id: 1,
+                    branch: 'main',
+                    commit: 'aefe63c',
+                    message: 'updated ui components',
+                    author: 'John Doe',
+                    timestamp: 1709593559000,
+                    current: true,
+                },
+                {
+                    id: 2,
+                    branch: 'main',
+                    commit: 'ab0057ee',
+                    message: 'fixed app crashing all the time',
+                    author: 'Jane Doe',
+                    timestamp: 1609593559000,
+                    current: false,
+                },
+                {
+                    id: 3,
+                    branch: 'main',
+                    commit: 'ad34eab',
+                    message: 'initial commit',
+                    author: 'John Doe',
+                    timestamp: 1609593559000,
+                    current: false,
+                },
+            ]);
+        }, 5000);
+    });
 }
 
 type ProdBuild = {
