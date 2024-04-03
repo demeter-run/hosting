@@ -4,6 +4,7 @@ type Build = {
     id: number;
     branch: string;
     commit: string;
+    commitFullSha?: string;
     message: string;
     author: string;
     timestamp: string | number;
@@ -18,6 +19,7 @@ export function getBuilds(): Promise<Build[]> {
                     id: 1,
                     branch: 'main',
                     commit: 'aefe63c',
+                    commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
                     message: 'updated ui components',
                     author: 'John Doe',
                     timestamp: 1709593559000,
@@ -27,6 +29,7 @@ export function getBuilds(): Promise<Build[]> {
                     id: 2,
                     branch: 'main',
                     commit: 'ab0057ee',
+                    commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
                     message: 'fixed app crashing all the time',
                     author: 'Jane Doe',
                     timestamp: 1609593559000,
@@ -36,6 +39,7 @@ export function getBuilds(): Promise<Build[]> {
                     id: 3,
                     branch: 'main',
                     commit: 'ad34eab',
+                    commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
                     message: 'initial commit',
                     author: 'John Doe',
                     timestamp: 1609593559000,
@@ -50,6 +54,7 @@ type ProdBuild = {
     id: number;
     branch: string;
     commit: string;
+    commitFullSha: string;
     message: string;
     author: string;
     timestamp: string | number;
@@ -67,6 +72,7 @@ export function getProdBuild(): Promise<ProdBuild> {
                 id: 1,
                 branch: 'main',
                 commit: 'aefe63c',
+                commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
                 message: 'updated ui components',
                 author: 'John Doe',
                 timestamp: 1609593559000,

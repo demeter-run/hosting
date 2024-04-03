@@ -3,6 +3,10 @@ import { Namespace } from './mint.server';
 export type Project = {
     namespace: Namespace;
     aliases: Namespace[];
+    github: {
+        org: string;
+        project: string;
+    };
 };
 
 export function getProjectData(project: string): Promise<Project> {
@@ -10,6 +14,10 @@ export function getProjectData(project: string): Promise<Project> {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve({
+                github: {
+                    org: 'demeter-run',
+                    project: 'hosting',
+                },
                 namespace: {
                     name: 'apollo',
                     address: 'addr1qyp9ut60xhp0u936g6qjng29n5usgj7x235qyq22jfzhkqcl2q7csldaa358nhncufmgr2nvxs6t8chnn9v2zssg9g7qxy3kn4',

@@ -5,6 +5,7 @@ import { ClientOnly } from 'remix-utils/client-only';
 import FRONTEND_TEMPLATES from '~/data/frontend-templates';
 import { BranchIcon, CommitIcon } from '~/fragments/icons';
 import { formatDateClient } from '~/helpers/date';
+import { useProjectData } from '~/helpers/hooks';
 import invariant from '~/helpers/invariant';
 import { getProdBuild } from '~/server/builds.server';
 
@@ -14,7 +15,6 @@ export const meta: MetaFunction = () => {
 
 export async function loader() {
     const prodBuild = await getProdBuild();
-
     invariant(prodBuild, 'Failed to load production build data.');
 
     return json({ prodBuild });
@@ -22,6 +22,7 @@ export async function loader() {
 
 export default function Dashboard() {
     const { prodBuild } = useLoaderData<typeof loader>();
+    const projectData = useProjectData();
 
     return (
         <>
@@ -81,9 +82,15 @@ export default function Dashboard() {
                     <div className="flex items-center mt-1">
                         <CommitIcon className="w-4 mr-2" />
                         <div className="flex items-center text-sm">
-                            <div className="font-mono mr-2" title="Commit">
+                            <a
+                                href={`https://github.com/${projectData?.github.org}/${projectData?.github.project}/commit/${prodBuild.commitFullSha}`}
+                                className="font-mono mr-2 link-text"
+                                title="Commit"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
                                 {prodBuild.commit}
-                            </div>
+                            </a>
                             <div className="line-clamp-1" title="Commit message">
                                 {prodBuild.message}
                             </div>
