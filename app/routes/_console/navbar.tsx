@@ -1,6 +1,15 @@
-import { NavLink, useParams } from '@remix-run/react';
+import { Link, NavLink, useParams } from '@remix-run/react';
+import { Namespace } from '~/server/mint.server';
+import { Fragment } from 'react';
+import { Menu, Transition } from '@headlessui/react';
+import { ChevronDownIcon, ChevronRightIcon } from '~/fragments/icons';
 
-export default function Navbar() {
+type NavbarProps = {
+    walletNamespaces: Namespace[];
+};
+
+export default function Navbar(props: NavbarProps) {
+    const { walletNamespaces } = props;
     const project = useParams().project;
 
     return (
@@ -8,50 +17,46 @@ export default function Navbar() {
             <div className="h-16 flex items-center">
                 <a className="flex items-center" href="/">
                     <img className="w-5" src="/assets/logos/demeter-isotype-black.svg" alt="Demeter" />
-                    <div className="text-xl ml-1 font-semibold">Hosting</div>
+                    <div className="text-xl ml-2 font-semibold">Hosting</div>
                 </a>
-                <div className="hs-dropdown relative inline-flex ml-4 sm:ml-10">
-                    <button
-                        id="hs-dropdown-default"
-                        type="button"
-                        className="hs-dropdown-toggle inline-flex items-center gap-x-2 font-semibold text-gray-800 disabled:opacity-50 disabled:pointer-events-none dark:text-white"
-                    >
-                        My project
-                        <svg
-                            className="hs-dropdown-open:rotate-180 size-4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="m6 9 6 6 6-6" />
-                        </svg>
-                    </button>
 
-                    <div
-                        className="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg p-2 mt-2 dark:bg-gray-800 dark:border dark:border-gray-700 dark:divide-gray-700 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
-                        aria-labelledby="hs-dropdown-default"
-                    >
-                        <a
-                            className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700"
-                            href="/"
-                        >
-                            My other project
-                        </a>
+                <ChevronRightIcon className="w-5 mt-[2px] mx-2" />
 
-                        <a
-                            className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700"
-                            href="/"
-                        >
-                            New project...
-                        </a>
-                    </div>
-                </div>
+                <Menu as="div" className="relative inline-block text-left">
+                    <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 text-xl font-normal text-gray-900">
+                        {project}
+                        <ChevronDownIcon className="w-4 mt-2" aria-hidden="true" />
+                    </Menu.Button>
+                    <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                    >
+                        <Menu.Items className="absolute left-0 z-10 mt-2 py-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="py-1">
+                                {walletNamespaces.map(n => (
+                                    <Menu.Item key={n.name}>
+                                        <Link className="block px-4 py-2 text-sm hover:bg-gray-100" to={`/${n.name}/`}>
+                                            {n.name}
+                                        </Link>
+                                    </Menu.Item>
+                                ))}
+                                <div className="px-4 py-2">
+                                    <div className="divider" />
+                                </div>
+                                <Menu.Item>
+                                    <Link className="block px-4 py-2 text-sm hover:bg-gray-100" to="/mint-namespace">
+                                        Create new project
+                                    </Link>
+                                </Menu.Item>
+                            </div>
+                        </Menu.Items>
+                    </Transition>
+                </Menu>
             </div>
 
             <div className="sm:flex sm:items-center sm:w-auto h-8 sm:h-10 ml-4 sm:ml-0 sm:mr-0 relative">
