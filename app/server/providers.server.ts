@@ -4,6 +4,7 @@ export type Provider = {
     location: string;
     logo: string;
     features?: string[];
+    supportLink?: string;
 };
 
 export function getProviders(): Promise<Provider[]> {
@@ -28,6 +29,7 @@ export function getProviders(): Promise<Provider[]> {
                         'GraphQL',
                         'UTxO RPC',
                     ],
+                    supportLink: 'https://discord.gg/ZTHcHUy5HY',
                 },
                 {
                     id: 2,

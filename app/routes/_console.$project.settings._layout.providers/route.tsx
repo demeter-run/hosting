@@ -52,7 +52,11 @@ export default function Providers() {
                                 </div>
                             ))}
                         </div>
-                        <div className="md:ml-auto flex md:items-center flex-col md:flex-row gap-3"></div>
+                        {p.supportLink && (
+                            <a href={p.supportLink} target="_blank" rel="noopener noreferrer" className="btn-secondary-mini mt-8">
+                                get support
+                            </a>
+                        )}
                     </div>
                 ))}
             </div>
