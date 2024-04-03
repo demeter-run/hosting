@@ -1,11 +1,13 @@
-import { NavLink, Outlet } from '@remix-run/react';
+import { NavLink, Outlet, useParams } from '@remix-run/react';
 import { GasIcon, GlobeAltIcon, GlobeAmericasIcon } from '~/fragments/icons';
 
 export default function Settings() {
+    const project = useParams().project;
+
     return (
         <div className="flex flex-col md:flex-row gap-8">
             <ul className="side-menu-wrapper">
-                {SIDE_NAV.map(item => (
+                {getMenu(project).map(item => (
                     <li key={item.to}>
                         <NavLink
                             to={item.to}
@@ -24,20 +26,22 @@ export default function Settings() {
     );
 }
 
-const SIDE_NAV = [
-    {
-        name: 'Providers',
-        to: '/project/settings/providers',
-        icon: <GlobeAmericasIcon className="w-4" />,
-    },
-    {
-        name: 'Namespaces',
-        to: '/project/settings/namespaces',
-        icon: <GlobeAltIcon className="w-4" />,
-    },
-    {
-        name: 'Gas',
-        to: '/project/settings/gas',
-        icon: <GasIcon className="w-4" />,
-    },
-];
+function getMenu(project: string | undefined) {
+    return [
+        {
+            name: 'Providers',
+            to: `/${project}/settings/providers`,
+            icon: <GlobeAmericasIcon className="w-4" />,
+        },
+        {
+            name: 'Namespace',
+            to: `/${project}/settings/namespace`,
+            icon: <GlobeAltIcon className="w-4" />,
+        },
+        {
+            name: 'Gas',
+            to: `/${project}/settings/gas`,
+            icon: <GasIcon className="w-4" />,
+        },
+    ];
+}
