@@ -26,6 +26,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export default function Console() {
     const { walletNamespaces } = useLoaderData<typeof loader>();
     const { state } = useNavigation();
+    
     return (
         <>
             {state === 'loading' && <PageLoader />}
