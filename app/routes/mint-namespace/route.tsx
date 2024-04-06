@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getWalletAddress, getWalletBalance, useConnectWallet, WalletModal } from '@newm.io/cardano-dapp-wallet-connector';
 import { CheckCircleIcon, LogoHover, SpinnerIcon, XCircleIcon } from '~/fragments/icons';
 import { Link, json, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
@@ -61,6 +61,7 @@ export default function MintNamespace() {
     const [namespace, setNamespace] = useState('');
     const [txCbor, setTxCbor] = useState('');
     const { txHash, txStatus } = useLoaderData<typeof loader>();
+    const fetcherRunning = useMemo(() => fetcher.state === 'loading' || fetcher.state === 'submitting', [fetcher.state]);
 
     // Fetches wallet data on wallet connection
     useEffect(() => {
@@ -136,6 +137,7 @@ export default function MintNamespace() {
 
     // Handles review details button click, triggers server side request for transaction cbor
     const handleReviewDetails = () => {
+        console.log('Review details clicked');
         fetcher.submit({ intent: 'get_cbor', namespace: namespace, address: walletAddress }, { method: 'POST' });
     };
 
@@ -245,7 +247,7 @@ export default function MintNamespace() {
                                     </div>
                                 )}
                             </div>
-                            <button className="btn-primary mt-8" onClick={() => handleReviewDetails()} disabled={availability !== 'available'}>
+                            <button className="btn-primary mt-8" onClick={() => handleReviewDetails()} disabled={availability !== 'available' || fetcherRunning}>
                                 Review details
                             </button>
                         </div>
