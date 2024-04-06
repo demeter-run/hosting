@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader() {
-    const requests = getRequests();
+    const requests = await getRequests();
 
     invariant(requests, 'Failed to load requests data');
 

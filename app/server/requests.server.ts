@@ -1,3 +1,5 @@
+import { mockApiCall } from '~/helpers/misc';
+
 type Request = {
     id: number;
     timestamp: string | number;
@@ -9,9 +11,8 @@ type Request = {
 
 // TODO: Define if we need a separate id or we can use the timestamp as id
 
-
-
-export function getRequests(): Request[] {
+export async function getRequests(): Promise<Request[]> {
+    await mockApiCall();
     return [
         {
             id: 1,

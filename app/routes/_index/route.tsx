@@ -1,10 +1,11 @@
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Link, json, useFetcher } from '@remix-run/react';
+import { Link, json, useFetcher, useNavigation } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { getWalletAddress, useConnectWallet, WalletModal } from '@newm.io/cardano-dapp-wallet-connector';
 import { LogoHover } from '~/fragments/icons';
 import ModalSelectProject from './modal-select-project';
 import { Namespace, getNamespaces } from '~/server/mint.server';
+import { PageLoader } from '~/fragments/page-loader';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Demeter Hosting' }, { name: 'description', content: 'Demeter Hosting' }];
@@ -29,6 +30,7 @@ export default function Index() {
     const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
     const [isSelectProjectOpen, setIsSelectProjectOpen] = useState(false);
     const [namespaces, setNamespaces] = useState<Namespace[]>([]);
+    const { state } = useNavigation();
 
     // Listens for server side responses from fetcher and updates state accordingly
     useEffect(() => {
@@ -65,6 +67,7 @@ export default function Index() {
 
     return (
         <>
+            {state === 'loading' && <PageLoader />}
             <WalletModal isOpen={isWalletModalOpen} onClose={() => setIsWalletModalOpen(false)} />
             <ModalSelectProject isSelectProjectOpen={isSelectProjectOpen} setIsSelectProjectOpen={setIsSelectProjectOpen} namespaces={namespaces} />
 

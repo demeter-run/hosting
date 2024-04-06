@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader() {
-    const costs = getCosts();
+    const costs = await getCosts();
 
     invariant(costs, 'Failed to load costs data');
 

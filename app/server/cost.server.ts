@@ -1,3 +1,5 @@
+import { mockApiCall } from '~/helpers/misc';
+
 type Cost = {
     id: number;
     timestamp: string | number;
@@ -7,7 +9,8 @@ type Cost = {
 
 // TODO: Define if we need a separate id or we can use the timestamp as id
 
-export function getCosts(): Cost[] {
+export async function getCosts(): Promise<Cost[]> {
+    await mockApiCall();
     return [
         {
             id: 1,
@@ -33,7 +36,6 @@ export function getCosts(): Cost[] {
             requests: 3409,
             dcus: 4450467,
         },
-
         {
             id: 5,
             timestamp: 1642690800000,

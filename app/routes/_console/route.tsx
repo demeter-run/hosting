@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs, json, redirect } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
+import { Outlet, useLoaderData, useNavigation } from '@remix-run/react';
+import { PageLoader } from '~/fragments/page-loader';
 import invariant from '~/helpers/invariant';
 import Footer from '~/routes/_console/footer';
 import Navbar from '~/routes/_console/navbar';
@@ -24,8 +25,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function Console() {
     const { walletNamespaces } = useLoaderData<typeof loader>();
+    const { state } = useNavigation();
+    
     return (
         <>
+            {state === 'loading' && <PageLoader />}
             <Navbar walletNamespaces={walletNamespaces} />
             <div className="bg-[#fafafa] dark:bg-gray-950 border-t border-b border-gray-50 dark:border-gray-600">
                 <div className="wrapper min-h-[calc(100vh-102px)] py-10">
