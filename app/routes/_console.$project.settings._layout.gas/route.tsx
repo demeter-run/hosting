@@ -24,26 +24,22 @@ export default function Gas() {
     return (
         <>
             <h1 className="title-3xl">Gas</h1>
-
-            <p className="mt-4">Top up DCUS by using your connected wallet or send them to the project address.</p>
-
             <div className="content-wrapper mt-4 p-6">
                 <div className="flex items-end">
                     <div className="">
                         <div className="label-1">Balance</div>
-                        <div className="flex items-center">
+                        <div className="flex sm:items-center gap-4 sm:gap-8 flex-col sm:flex-row">
                             <div className="flex items-end">
                                 <div className="text-4xl">{balance.toLocaleString('en-US')}</div>
                                 <div className="font-semibold text-sm ml-1 mb-[2px]">DCUS</div>
                             </div>
-
-                            <button className="btn-primary-mini ml-8">Open wallet</button>
+                            <button className="btn-primary-mini">Top up dcus</button>
                         </div>
                     </div>
                 </div>
 
-                <div className="label-1 mt-4">Address</div>
-                <div className="text-sm mt-[2px]">
+                <div className="label-1 mt-4">Project address</div>
+                <div className="text-sm mt-[2px] break-words">
                     addr1qxjtluvvk7xfjprjys3y08rhpd0ru8462543tydxvdyfr6uzwmsl2h24j0pa53yevcr0dgfrmv6svmf83guz4pzvxcc07ssn0szv
                 </div>
             </div>
