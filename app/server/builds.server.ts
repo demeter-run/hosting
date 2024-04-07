@@ -1,7 +1,7 @@
 import { mockApiCall } from '~/helpers/misc';
 import { Provider } from './providers.server';
 
-type Build = {
+export type Build = {
     id: number;
     branch: string;
     commit: string;
@@ -94,4 +94,17 @@ export async function getProdBuild(): Promise<ProdBuild> {
         ],
         activeFeatures: ['Cardano Node', 'DB-Sync', 'Ogmios', 'Kupo', 'Blockfrost RYO'],
     };
+}
+
+type UpdateProdBuildPayload = {
+    buildId: string;
+    enabled: boolean;
+};
+
+export async function updateProdBuild(payload: UpdateProdBuildPayload) {
+    const { buildId, enabled } = payload;
+    console.log(buildId);
+    console.log(enabled);
+    // When the promise is resolved the loader will re-run and the UI will update
+    await mockApiCall();
 }

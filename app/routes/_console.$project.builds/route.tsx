@@ -1,10 +1,12 @@
-import { json, type MetaFunction } from '@remix-run/node';
+import { ActionFunctionArgs, json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { BranchIcon, CommitIcon } from '~/fragments/icons';
 import { formatDateClient } from '~/helpers/date';
 import { useProjectData } from '~/helpers/hooks';
 import invariant from '~/helpers/invariant';
-import { getBuilds } from '~/server/builds.server';
+import { Build, getBuilds, updateProdBuild } from '~/server/builds.server';
+import ModalConfirmRestore from './modal-confirm-restore';
+import { useState } from 'react';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Builds - Demeter Hosting' }, { name: 'description', content: 'Builds - Demeter Hosting' }];
@@ -17,12 +19,33 @@ export async function loader() {
     return json({ builds });
 }
 
+export async function action({ request }: ActionFunctionArgs) {
+    const data = await request.formData();
+    const buildId = data.get('buildId') as string;
+
+    await updateProdBuild({ buildId, enabled: true });
+    return null;
+}
+
 export default function Builds() {
     const { builds } = useLoaderData<typeof loader>();
     const projectData = useProjectData();
+    const [isConfirmRestoreOpen, setIsConfirmRestoreOpen] = useState(false);
+    const [restoreBuild, setRestoreBuild] = useState<Build | null>(null);
+
+    function handleRestore(buildId: number) {
+        setRestoreBuild(builds.find(b => b.id === buildId) || null);
+        setIsConfirmRestoreOpen(true);
+    }
 
     return (
         <>
+            <ModalConfirmRestore
+                isConfirmRestoreOpen={isConfirmRestoreOpen}
+                setIsConfirmRestoreOpen={setIsConfirmRestoreOpen}
+                restoreBuild={restoreBuild}
+                projectData={projectData}
+            />
             <h1 className="title-3xl">Builds</h1>
             <div className="content-wrapper mt-4">
                 {builds.length ? (
@@ -67,7 +90,7 @@ export default function Builds() {
                                     {b.current ? (
                                         <div className="tag-green">current</div>
                                     ) : (
-                                        <button className="btn-secondary-mini" type="button">
+                                        <button className="btn-secondary-mini" type="button" onClick={() => handleRestore(b.id)}>
                                             Restore
                                         </button>
                                     )}
