@@ -1,5 +1,6 @@
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
+import { ArrowLongLeftIcon, ArrowLongRightIcon } from '~/fragments/icons';
 import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getBalance, getLedger } from '~/server/gas.server';
@@ -48,22 +49,30 @@ export default function Gas() {
                 <table className="table-wrapper">
                     <thead>
                         <tr>
-                            <th className="table-th">From</th>
-                            <th className="table-th">To</th>
-                            <th className="table-th">Provider</th>
-                            <th className="table-th text-right">Requests</th>
+                            <th className="table-th"></th>
+                            <th className="table-th">Time</th>
+                            <th className="table-th">Type</th>
                             <th className="table-th text-right">Dcus</th>
+                            <th className="table-th text-right">Requests</th>
+                            <th className="table-th">Provider</th>
                             <th className="table-th text-right"></th>
                         </tr>
                     </thead>
                     <tbody className="table-body">
                         {ledger.map(l => (
                             <tr key={l.id} className="table-tr">
-                                <td className="table-td">{formatDateClient(new Date(l.from), 'short', 'short')}</td>
-                                <td className="table-td">{formatDateClient(new Date(l.to), 'short', 'short')}</td>
-                                <td className="table-td">{l.provider}</td>
-                                <td className="table-td text-right">{l.requests.toLocaleString('en-US')}</td>
+                                <td className="table-td">
+                                    {l.type === 'topup' ? (
+                                        <ArrowLongRightIcon className="w-6 text-green-500" />
+                                    ) : (
+                                        <ArrowLongLeftIcon className="w-6 text-red-500" />
+                                    )}
+                                </td>
+                                <td className="table-td">{formatDateClient(new Date(l.timestamp), 'short', 'short')}</td>
+                                <td className="table-td">{TRANSACTION_TYPES[l.type]}</td>
                                 <td className="table-td text-right">{l.dcus.toLocaleString('en-US')}</td>
+                                <td className="table-td text-right">{l.requests && l.requests.toLocaleString('en-US')}</td>
+                                <td className="table-td">{l.provider && l.provider}</td>
                                 <td className="table-td text-right">
                                     <a
                                         href={`https://beta.explorer.cardano.org/en/transaction/${l.hash}`}
@@ -82,3 +91,8 @@ export default function Gas() {
         </>
     );
 }
+
+const TRANSACTION_TYPES: { [key: string]: string } = {
+    topup: 'Top up DCUs',
+    charge: 'Usage charge',
+};
