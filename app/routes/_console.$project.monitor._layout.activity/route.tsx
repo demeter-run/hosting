@@ -2,7 +2,7 @@ import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { formatDate, formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
-import { getCosts } from '~/server/cost.server';
+import { getCosts } from '~/server/activity.server';
 import { LineChart, Line, ResponsiveContainer, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 export const meta: MetaFunction = () => {
@@ -11,18 +11,17 @@ export const meta: MetaFunction = () => {
 
 export async function loader() {
     const costs = await getCosts();
-
     invariant(costs, 'Failed to load costs data');
 
     return json({ costs });
 }
 
-export default function Cost() {
+export default function Activity() {
     const { costs } = useLoaderData<typeof loader>();
 
     return (
         <>
-            <h1 className="title-3xl">Costs</h1>
+            <h1 className="title-3xl">Activity</h1>
 
             <div className="flex flex-col lg:flex-row gap-8 mt-4">
                 <div className="content-wrapper p-4">
@@ -50,7 +49,7 @@ export default function Cost() {
                 </div>
 
                 <div className="content-wrapper p-4">
-                <div className="font-mono font-semibold mb-4">DCUS</div>
+                    <div className="font-mono font-semibold mb-4">DCUS</div>
                     <ResponsiveContainer width="100%" height={200}>
                         <LineChart data={costs} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
                             <Line type="linear" dataKey="dcus" stroke="#4f46e5" />

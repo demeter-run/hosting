@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useParams } from '@remix-run/react';
-import { BoltIcon, CurrencyDollarIcon, LogIcon } from '~/fragments/icons';
+import { BoltIcon, LogIcon } from '~/fragments/icons';
 
 export default function Monitor() {
     const project = useParams().project;
@@ -34,14 +34,9 @@ function getMenu(project: string | undefined) {
             icon: <LogIcon className="w-4" />,
         },
         {
-            name: 'Requests',
-            to: `/${project}/monitor/requests`,
+            name: 'Activity',
+            to: `/${project}/monitor/activity`,
             icon: <BoltIcon className="w-4" />,
-        },
-        {
-            name: 'Cost',
-            to: `/${project}/monitor/cost`,
-            icon: <CurrencyDollarIcon className="w-4" />,
         },
     ];
 }
