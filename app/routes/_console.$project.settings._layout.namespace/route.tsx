@@ -3,19 +3,19 @@ import { useLoaderData } from '@remix-run/react';
 import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
 import { getPageData } from '~/server/namespace.server';
+
 export const meta: MetaFunction = () => {
     return [{ title: 'Namespaces - Demeter Hosting' }, { name: 'description', content: 'Namespaces - Demeter Hosting' }];
 };
 
 export async function loader() {
-    const data = await getPageData();
-    invariant(data, 'Failed to load namespace data');
-
-    return json({ data });
+    const pageData = await getPageData();
+    invariant(pageData, 'Failed to load page data');
+    return json({ pageData });
 }
 
 export default function Namespaces() {
-    const { data } = useLoaderData<typeof loader>();
+    const { pageData: pd } = useLoaderData<typeof loader>();
 
     return (
         <>
@@ -24,16 +24,16 @@ export default function Namespaces() {
             <div className="content-wrapper mt-4 px-4 py-6">
                 <div className="flex flex-col lg:flex-row gap-8 lg:justify-between lg:items-center w-full">
                     <div className="lg:w-3/4">
-                        <div className="text-4xl font-semibold">{data.namespace.name}</div>
+                        <div className="text-4xl font-semibold">{pd.namespace.name}</div>
                         <div className="label-1 mt-8">Minted</div>
-                        <div className="">{formatDateClient(new Date(data.namespace.timestamp), 'medium', 'short')}</div>
+                        <div className="">{formatDateClient(new Date(pd.namespace.timestamp), 'medium', 'short')}</div>
                         <div className="label-1 mt-4">Address</div>
-                        <div className="break-words">{data.namespace.address}</div>
+                        <div className="break-words">{pd.namespace.address}</div>
                         <div className="label-1 mt-4">Policy id</div>
-                        <div className="break-words">{data.namespace.policyId}</div>
+                        <div className="break-words">{pd.namespace.policyId}</div>
                     </div>
                     <a
-                        href={`https://beta.explorer.cardano.org/en/transaction/${data.namespace.hash}`}
+                        href={`https://beta.explorer.cardano.org/en/transaction/${pd.namespace.hash}`}
                         className="btn-secondary-mini text-nowrap inline-flex flex-none"
                         target="_blank"
                         rel="noreferrer"
@@ -50,8 +50,8 @@ export default function Namespaces() {
             </div>
 
             {/* <div className="content-wrapper mt-4">
-                {data.aliases.length ? (
-                    data.aliases.map(a => (
+                {pd.aliases.length ? (
+                    pd.aliases.map(a => (
                         <div
                             key={a.name}
                             className="border-b border-gray-100 last:border-b-0 p-4 flex flex-col lg:flex-row gap-8 lg:justify-between lg:items-center"

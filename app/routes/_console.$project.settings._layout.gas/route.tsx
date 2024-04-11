@@ -3,24 +3,20 @@ import { useLoaderData } from '@remix-run/react';
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '~/fragments/icons';
 import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
-import { getBalance, getLedger } from '~/server/gas.server';
+import { getPageData } from '~/server/gas.server';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Gas - Demeter Hosting' }, { name: 'description', content: 'Gas - Demeter Hosting' }];
 };
 
 export async function loader() {
-    const ledger = await getLedger();
-    invariant(ledger, 'Failed to load ledger data');
-
-    const balance = await getBalance();
-    invariant(balance, 'Failed to load balance data');
-
-    return json({ ledger, balance });
+    const pageData = await getPageData();
+    invariant(pageData, 'Failed to load page data');
+    return json({ pageData});
 }
 
 export default function Gas() {
-    const { ledger, balance } = useLoaderData<typeof loader>();
+    const { pageData: pd } = useLoaderData<typeof loader>();
 
     return (
         <>
@@ -31,7 +27,7 @@ export default function Gas() {
                         <div className="label-1">Balance</div>
                         <div className="flex sm:items-center gap-4 sm:gap-8 flex-col sm:flex-row">
                             <div className="flex items-end">
-                                <div className="text-4xl">{balance.toLocaleString('en-US')}</div>
+                                <div className="text-4xl">{pd.balance.toLocaleString('en-US')}</div>
                                 <div className="font-semibold text-sm ml-1 mb-[2px]">DCUS</div>
                             </div>
                             <button className="btn-primary-mini">Top up dcus</button>
@@ -59,7 +55,7 @@ export default function Gas() {
                         </tr>
                     </thead>
                     <tbody className="table-body">
-                        {ledger.map(l => (
+                        {pd.gasLedger.map(l => (
                             <tr key={l.id} className="table-tr">
                                 <td className="table-td">
                                     {l.type === 'topup' ? (
