@@ -1,4 +1,5 @@
 import { mockApiCall } from '~/helpers/misc';
+import { Namespace } from '~/helpers/types';
 
 export async function checkAvailability(namespace: string): Promise<boolean> {
     // console.log(namespace);
@@ -21,14 +22,6 @@ export async function getTxStatus(hash: string): Promise<'pending' | 'confirmed'
     // return statuses[Math.floor(Math.random() * statuses.length)];
     return 'pending';
 }
-
-export type Namespace = {
-    name: string;
-    address: string;
-    policyId: string;
-    timestamp: string | number;
-    hash: string;
-};
 
 export async function getNamespaces(address: string): Promise<Namespace[]> {
     console.log(address);

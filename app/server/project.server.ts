@@ -1,5 +1,5 @@
 import { mockApiCall } from '~/helpers/misc';
-import { Namespace } from './mint.server';
+import { Namespace } from '~/helpers/types';
 
 export type Project = {
     namespace: Namespace;

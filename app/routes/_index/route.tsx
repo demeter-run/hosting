@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { getWalletAddress, useConnectWallet, WalletModal } from '@newm.io/cardano-dapp-wallet-connector';
 import { LogoHover } from '~/fragments/icons';
 import ModalSelectProject from './modal-select-project';
-import { Namespace, getNamespaces } from '~/server/mint.server';
+import { getNamespaces } from '~/server/mint.server';
 import { PageLoader } from '~/fragments/page-loader';
+import { Namespace } from '~/helpers/types';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Demeter Hosting' }, { name: 'description', content: 'Demeter Hosting' }];
