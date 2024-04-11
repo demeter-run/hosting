@@ -5,24 +5,21 @@ import { ClientOnly } from 'remix-utils/client-only';
 import FRONTEND_TEMPLATES from '~/data/frontend-templates';
 import { BranchIcon, CommitIcon } from '~/fragments/icons';
 import { formatDateClient } from '~/helpers/date';
-import { useProjectData } from '~/helpers/hooks';
 import invariant from '~/helpers/invariant';
-import { getProdBuild } from '~/server/builds.server';
+import { getPageData } from '~/server/dashboard.server';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Dashboard - Demeter Hosting' }, { name: 'description', content: 'Dashboard - Demeter Hosting' }];
 };
 
 export async function loader() {
-    const prodBuild = await getProdBuild();
-    invariant(prodBuild, 'Failed to load production build data.');
-
-    return json({ prodBuild });
+    const pageData = await getPageData();
+    invariant(pageData, 'Failed to load page data');
+    return json({ pageData });
 }
 
 export default function Dashboard() {
-    const { prodBuild } = useLoaderData<typeof loader>();
-    const projectData = useProjectData();
+    const { pageData: pd } = useLoaderData<typeof loader>();
 
     return (
         <>
@@ -31,14 +28,14 @@ export default function Dashboard() {
             <div className="content-wrapper mt-4 px-4 py-6 flex flex-col md:flex-row gap-8">
                 <div className="flex flex-col lg:flex-row flex-[2_2_0%] gap-8">
                     <div className="flex-1">
-                        <img className="rounded-md" src={prodBuild.screenshot} alt="" />
+                        <img className="rounded-md" src={pd.screenshot} alt="" />
                     </div>
                     <div className="flex-1">
-                        <div className="tag-green">{prodBuild.status}</div>
+                        <div className="tag-green">{pd.status}</div>
                         <div className="label-1 mt-3">Providers</div>
                         <table className="mt-1">
                             <tbody>
-                                {prodBuild.providers.map(provider => (
+                                {pd.providers.map(provider => (
                                     <tr key={provider.id}>
                                         <td className="">
                                             <img className="w-5" src={provider.logo} alt={provider.name} />
@@ -52,7 +49,7 @@ export default function Dashboard() {
 
                         <div className="label-1 mt-3">Active features</div>
                         <div className="flex flex-wrap gap-3 mt-2">
-                            {prodBuild.activeFeatures.map(feature => (
+                            {pd.activeFeatures.map(feature => (
                                 <div key={feature} className="tag-accent1">
                                     {feature}
                                 </div>
@@ -65,34 +62,34 @@ export default function Dashboard() {
                     <div className="text-base">namespace.io namespace.demeter.host</div>
 
                     <div className="label-1 mt-3">Build id</div>
-                    <div className="text-base">{prodBuild.id}</div>
+                    <div className="text-base">{pd.build.id}</div>
 
                     <div className="label-1 mt-3">Created</div>
                     <div className="text-base">
-                        {formatDateClient(new Date(prodBuild.timestamp), 'medium', 'short')} by {prodBuild.author}
+                        {formatDateClient(new Date(pd.build.timestamp), 'medium', 'short')} by {pd.build.author}
                     </div>
 
                     <div className="label-1 mt-3">Source</div>
                     <div className="flex items-center mt-1">
                         <BranchIcon className="w-4 mr-2" />
                         <div className="text-sm font-mono" title="Branch">
-                            {prodBuild.branch}
+                            {pd.build.branch}
                         </div>
                     </div>
                     <div className="flex items-center mt-1">
                         <CommitIcon className="w-4 mr-2" />
                         <div className="flex items-center text-sm">
                             <a
-                                href={`https://github.com/${projectData?.github.org}/${projectData?.github.project}/commit/${prodBuild.commitFullSha}`}
+                                href={`https://github.com/${pd.github.org}/${pd.github.project}/commit/${pd.build.commitFullSha}`}
                                 className="font-mono mr-2 link-text"
                                 title="Commit"
                                 target="_blank"
                                 rel="noreferrer"
                             >
-                                {prodBuild.commit}
+                                {pd.build.commit}
                             </a>
                             <div className="line-clamp-1" title="Commit message">
-                                {prodBuild.message}
+                                {pd.build.message}
                             </div>
                         </div>
                     </div>
