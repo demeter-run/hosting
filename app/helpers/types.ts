@@ -15,3 +15,13 @@ export type gasLedgerItem = {
   hash: string;
   type: string;
 };
+
+export type Provider = {
+  id: number;
+  name: string;
+  location: string;
+  logo: string;
+  features?: string[];
+  supportLink?: string;
+  isEnabled: boolean;
+};

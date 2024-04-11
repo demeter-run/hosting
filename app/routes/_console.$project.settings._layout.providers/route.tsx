@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, json, type MetaFunction } from '@remix-run/node';
 import { useFetcher, useLoaderData } from '@remix-run/react';
 import invariant from '~/helpers/invariant';
-import { getProviders, updateProvider } from '~/server/providers.server';
+import { getPageData, updateProvider } from '~/server/providers.server';
 import CardProvider from './card-provider';
 import { PageLoader } from '~/fragments/page-loader';
 import { useMemo } from 'react';
@@ -11,10 +11,9 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader() {
-    const providers = await getProviders();
-    invariant(providers, 'Failed to load providers data');
-
-    return json({ providers });
+    const pageData = await getPageData();
+    invariant(pageData, 'Failed to load page data');
+    return json({ pageData });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -27,7 +26,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Providers() {
-    const { providers } = useLoaderData<typeof loader>();
+    const { pageData: pd } = useLoaderData<typeof loader>();
     const fetcher = useFetcher();
     const fetcherRunning = useMemo(() => fetcher.state === 'loading' || fetcher.state === 'submitting', [fetcher.state]);
 
@@ -41,7 +40,7 @@ export default function Providers() {
             <h1 className="title-3xl">Select providers</h1>
 
             <div className="grid lg:grid-cols-2 gap-8 mt-4">
-                {providers.map(p => (
+                {pd.providers.map(p => (
                     <CardProvider key={p.id} provider={p} handleProviderChange={handleProviderChange} fetcherRunning={fetcherRunning} />
                 ))}
             </div>
