@@ -9,7 +9,7 @@ type ModalSelectProjectProps = {
     isConfirmRestoreOpen: boolean;
     setIsConfirmRestoreOpen: React.Dispatch<React.SetStateAction<boolean>>;
     restoreBuild: Build | null;
-    pd: { builds: Build[]; github: { org: string; project: string } };
+    pd: { builds: Build[]; github: { organization: string; repository: string } };
 };
 
 export default function ModalConfirmRestore(props: ModalSelectProjectProps) {
@@ -59,7 +59,7 @@ export default function ModalConfirmRestore(props: ModalSelectProjectProps) {
                                             <CommitIcon className="w-4 mr-2" />
                                             <div className="flex items-center text-sm">
                                                 <a
-                                                    href={`https://github.com/${pd.github.org}/${pd.github.project}/commit/${build?.commitFullSha}`}
+                                                    href={`https://github.com/${pd.github.organization}/${pd.github.repository}/commit/${build?.commitFullSha}`}
                                                     className="font-mono mr-2 link-text"
                                                     title="Commit"
                                                     target="_blank"

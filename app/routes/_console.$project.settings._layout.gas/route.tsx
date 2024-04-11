@@ -35,7 +35,7 @@ export default function Gas() {
                     </div>
                 </div>
 
-                <div className="label-1 mt-4">Project address</div>
+                <div className="label-1 mt-4">Namespace address</div>
                 <div className="text-sm mt-[2px] break-words">
                     addr1qxjtluvvk7xfjprjys3y08rhpd0ru8462543tydxvdyfr6uzwmsl2h24j0pa53yevcr0dgfrmv6svmf83guz4pzvxcc07ssn0szv
                 </div>

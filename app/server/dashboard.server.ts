@@ -4,8 +4,8 @@ import { Build, Provider } from '~/helpers/types';
 type PageTypes = {
     build: Build;
     github: {
-        org: string;
-        project: string;
+        organization: string;
+        repository: string;
     };
     activeFeatures: string[];
     providers: Provider[];
@@ -27,8 +27,8 @@ export async function getPageData(): Promise<PageTypes> {
             current: true,
         },
         github: {
-            org: 'demeter-run',
-            project: 'hosting',
+            organization: 'demeter-run',
+            repository: 'hosting',
         },
         activeFeatures: ['Cardano Node', 'DB-Sync', 'Ogmios', 'Kupo', 'Blockfrost RYO'],
         providers: [

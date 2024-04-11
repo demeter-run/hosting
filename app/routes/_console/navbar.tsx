@@ -50,7 +50,7 @@ export default function Navbar(props: NavbarProps) {
                                 </div>
                                 <Menu.Item>
                                     <Link className="block px-4 py-2 text-sm hover:bg-gray-100" to="/mint-namespace">
-                                        Create new project
+                                        Mint new namespace
                                     </Link>
                                 </Menu.Item>
                             </div>

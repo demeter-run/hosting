@@ -80,7 +80,7 @@ export default function Dashboard() {
                         <CommitIcon className="w-4 mr-2" />
                         <div className="flex items-center text-sm">
                             <a
-                                href={`https://github.com/${pd.github.org}/${pd.github.project}/commit/${pd.build.commitFullSha}`}
+                                href={`https://github.com/${pd.github.organization}/${pd.github.repository}/commit/${pd.build.commitFullSha}`}
                                 className="font-mono mr-2 link-text"
                                 title="Commit"
                                 target="_blank"

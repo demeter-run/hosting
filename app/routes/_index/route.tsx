@@ -128,7 +128,7 @@ export default function Index() {
                         <>
                             {namespaces.length > 0 ? (
                                 <button className="btn-primary-large mt-8" onClick={() => setIsSelectProjectOpen(true)}>
-                                    Select project
+                                    Select namespace
                                 </button>
                             ) : (
                                 <Link className="btn-primary-large mt-8" to="/mint-namespace">

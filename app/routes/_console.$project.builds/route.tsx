@@ -64,7 +64,7 @@ export default function Builds() {
                                         <CommitIcon className="w-4 mr-2" />
                                         <div className="flex items-center text-sm">
                                             <a
-                                                href={`https://github.com/${pd.github.org}/${pd.github.project}/commit/${b.commitFullSha}`}
+                                                href={`https://github.com/${pd.github.organization}/${pd.github.repository}/commit/${b.commitFullSha}`}
                                                 className="font-mono mr-2 link-text"
                                                 title="Commit"
                                                 target="_blank"
