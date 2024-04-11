@@ -1,15 +1,15 @@
 import { Link, NavLink, useParams } from '@remix-run/react';
-import { Namespace } from '~/server/mint.server';
 import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon, ChevronRightIcon } from '~/fragments/icons';
+import { Namespace } from '~/helpers/types';
 
 type NavbarProps = {
-    walletNamespaces: Namespace[];
+    namespaces: Namespace[];
 };
 
 export default function Navbar(props: NavbarProps) {
-    const { walletNamespaces } = props;
+    const { namespaces } = props;
     const project = useParams().project;
 
     return (
@@ -38,7 +38,7 @@ export default function Navbar(props: NavbarProps) {
                     >
                         <Menu.Items className="absolute left-0 z-10 mt-2 py-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <div className="py-1">
-                                {walletNamespaces.map(n => (
+                                {namespaces.map(n => (
                                     <Menu.Item key={n.name}>
                                         <Link className="block px-4 py-2 text-sm hover:bg-gray-100" to={`/${n.name}/`}>
                                             {n.name}
