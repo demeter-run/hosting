@@ -1,51 +1,54 @@
 import { mockApiCall } from '~/helpers/misc';
-import { Provider } from './providers.server';
+import { Build, Provider } from '~/helpers/types';
 
-export type Build = {
-    id: number;
-    branch: string;
-    commit: string;
-    commitFullSha?: string;
-    message: string;
-    author: string;
-    timestamp: string | number;
-    current: boolean;
+type PageTypes = {
+    builds: Build[];
+    github: {
+        org: string;
+        project: string;
+    };
 };
 
-export async function getBuilds(): Promise<Build[]> {
+export async function getPageData(): Promise<PageTypes> {
     await mockApiCall();
-    return [
-        {
-            id: 1,
-            branch: 'main',
-            commit: 'aefe63c',
-            commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
-            message: 'updated ui components',
-            author: 'John Doe',
-            timestamp: 1709593559000,
-            current: true,
+    return {
+        builds: [
+            {
+                id: 1,
+                branch: 'main',
+                commit: 'aefe63c',
+                commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
+                message: 'updated ui components',
+                author: 'John Doe',
+                timestamp: 1709593559000,
+                current: true,
+            },
+            {
+                id: 2,
+                branch: 'main',
+                commit: 'ab0057ee',
+                commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
+                message: 'fixed app crashing all the time',
+                author: 'Jane Doe',
+                timestamp: 1609593559000,
+                current: false,
+            },
+            {
+                id: 3,
+                branch: 'main',
+                commit: 'ad34eab',
+                commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
+                message: 'initial commit',
+                author: 'John Doe',
+                timestamp: 1609593559000,
+                current: false,
+            },
+        ],
+        github: {
+            org: 'demeter-run',
+            project: 'hosting',
         },
-        {
-            id: 2,
-            branch: 'main',
-            commit: 'ab0057ee',
-            commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
-            message: 'fixed app crashing all the time',
-            author: 'Jane Doe',
-            timestamp: 1609593559000,
-            current: false,
-        },
-        {
-            id: 3,
-            branch: 'main',
-            commit: 'ad34eab',
-            commitFullSha: '2ae4bfc270b512faf3a1302b875a5bcf71c2934f',
-            message: 'initial commit',
-            author: 'John Doe',
-            timestamp: 1609593559000,
-            current: false,
-        },
-    ];
+    };
 }
 
 type ProdBuild = {

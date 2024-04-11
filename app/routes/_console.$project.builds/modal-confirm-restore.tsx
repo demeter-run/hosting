@@ -1,20 +1,19 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { Build } from '~/server/builds.server';
 import { BranchIcon, CommitIcon } from '~/fragments/icons';
-import { Project } from '~/server/project.server';
 import { formatDateClient } from '~/helpers/date';
 import { Form } from '@remix-run/react';
+import { Build } from '~/helpers/types';
 
 type ModalSelectProjectProps = {
     isConfirmRestoreOpen: boolean;
     setIsConfirmRestoreOpen: React.Dispatch<React.SetStateAction<boolean>>;
     restoreBuild: Build | null;
-    projectData: Project | null;
+    pd: { builds: Build[]; github: { org: string; project: string } };
 };
 
 export default function ModalConfirmRestore(props: ModalSelectProjectProps) {
-    const { isConfirmRestoreOpen, setIsConfirmRestoreOpen, restoreBuild: build, projectData } = props;
+    const { isConfirmRestoreOpen, setIsConfirmRestoreOpen, restoreBuild: build, pd } = props;
 
     return (
         <>
@@ -60,7 +59,7 @@ export default function ModalConfirmRestore(props: ModalSelectProjectProps) {
                                             <CommitIcon className="w-4 mr-2" />
                                             <div className="flex items-center text-sm">
                                                 <a
-                                                    href={`https://github.com/${projectData?.github.org}/${projectData?.github.project}/commit/${build?.commitFullSha}`}
+                                                    href={`https://github.com/${pd.github.org}/${pd.github.project}/commit/${build?.commitFullSha}`}
                                                     className="font-mono mr-2 link-text"
                                                     title="Commit"
                                                     target="_blank"

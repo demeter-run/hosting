@@ -2,21 +2,20 @@ import { ActionFunctionArgs, json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { BranchIcon, CommitIcon } from '~/fragments/icons';
 import { formatDateClient } from '~/helpers/date';
-import { useProjectData } from '~/helpers/hooks';
 import invariant from '~/helpers/invariant';
-import { Build, getBuilds, updateProdBuild } from '~/server/builds.server';
+import { getPageData, updateProdBuild } from '~/server/builds.server';
 import ModalConfirmRestore from './modal-confirm-restore';
 import { useState } from 'react';
+import { Build } from '~/helpers/types';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Builds - Demeter Hosting' }, { name: 'description', content: 'Builds - Demeter Hosting' }];
 };
 
 export async function loader() {
-    const builds = await getBuilds();
-    invariant(builds, 'Failed to load builds');
-
-    return json({ builds });
+    const pageData = await getPageData();
+    invariant(pageData, 'Failed to load page data');
+    return json({ pageData });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -28,13 +27,12 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Builds() {
-    const { builds } = useLoaderData<typeof loader>();
-    const projectData = useProjectData();
+    const { pageData: pd } = useLoaderData<typeof loader>();
     const [isConfirmRestoreOpen, setIsConfirmRestoreOpen] = useState(false);
     const [restoreBuild, setRestoreBuild] = useState<Build | null>(null);
 
     function handleRestore(buildId: number) {
-        setRestoreBuild(builds.find(b => b.id === buildId) || null);
+        setRestoreBuild(pd.builds.find(b => b.id === buildId) || null);
         setIsConfirmRestoreOpen(true);
     }
 
@@ -44,12 +42,12 @@ export default function Builds() {
                 isConfirmRestoreOpen={isConfirmRestoreOpen}
                 setIsConfirmRestoreOpen={setIsConfirmRestoreOpen}
                 restoreBuild={restoreBuild}
-                projectData={projectData}
+                pd={pd}
             />
             <h1 className="title-3xl">Builds</h1>
             <div className="content-wrapper mt-4">
-                {builds.length ? (
-                    builds.map(b => (
+                {pd.builds.length ? (
+                    pd.builds.map(b => (
                         <div key={b.id} className="border-b border-gray-100 last:border-b-0 p-4 flex flex-col md:flex-row md:items-center gap-3">
                             <div className="flex w-full flex-col lg:flex-row lg:items-center gap-3">
                                 <div className="lg:w-40" title="Build id">
@@ -66,7 +64,7 @@ export default function Builds() {
                                         <CommitIcon className="w-4 mr-2" />
                                         <div className="flex items-center text-sm">
                                             <a
-                                                href={`https://github.com/${projectData?.github.org}/${projectData?.github.project}/commit/${b.commitFullSha}`}
+                                                href={`https://github.com/${pd.github.org}/${pd.github.project}/commit/${b.commitFullSha}`}
                                                 className="font-mono mr-2 link-text"
                                                 title="Commit"
                                                 target="_blank"

@@ -32,3 +32,14 @@ export type ActivityItem = {
     requests: number;
     dcus: number;
 };
+
+export type Build = {
+    id: number;
+    branch: string;
+    commit: string;
+    commitFullSha: string;
+    message: string;
+    author: string;
+    timestamp: string | number;
+    current: boolean;
+};
