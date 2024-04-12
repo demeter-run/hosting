@@ -10,7 +10,7 @@ type NavbarProps = {
 
 export default function Navbar(props: NavbarProps) {
     const { namespaces } = props;
-    const project = useParams().project;
+    const namespace = useParams().namespace;
 
     return (
         <header className="wrapper flex sm:flex-col items-center sm:items-start">
@@ -24,7 +24,7 @@ export default function Navbar(props: NavbarProps) {
 
                 <Menu as="div" className="relative inline-block text-left">
                     <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 text-xl font-normal text-gray-900">
-                        {project}
+                        {namespace}
                         <ChevronDownIcon className="w-4 mt-2" aria-hidden="true" />
                     </Menu.Button>
                     <Transition
@@ -110,7 +110,7 @@ export default function Navbar(props: NavbarProps) {
                             className="hs-collapse hidden text-sm overflow-hidden transition-all duration-300 basis-full grow sm:block pl-6 pr-6 pb-6 sm:p-0 border-gray-50 border-b border-l border-r sm:border-none rounded-b-md sm:rounded-none bg-white dark:bg-gray-800 mt-4 sm:mt-0"
                         >
                             <div className="flex flex-col gap-8 mt-5 sm:flex-row sm:items-center sm:mt-0">
-                                {getMenu(project).map(item => (
+                                {getMenu(namespace).map(item => (
                                     <NavLink
                                         key={item.to}
                                         to={item.to}
@@ -134,24 +134,24 @@ export default function Navbar(props: NavbarProps) {
     );
 }
 
-function getMenu(project: string | undefined) {
+function getMenu(namespace: string | undefined) {
     return [
         {
             title: 'Dashboard',
-            to: `/${project}`,
+            to: `/${namespace}`,
             end: true,
         },
         {
             title: 'Builds',
-            to: `/${project}/builds`,
+            to: `/${namespace}/builds`,
         },
         {
             title: 'Monitor',
-            to: `/${project}/monitor`,
+            to: `/${namespace}/monitor`,
         },
         {
             title: 'Settings',
-            to: `/${project}/settings`,
+            to: `/${namespace}/settings`,
         },
     ];
 }

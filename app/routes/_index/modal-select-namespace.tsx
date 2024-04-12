@@ -3,19 +3,19 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Link } from '@remix-run/react';
 import { Namespace } from '~/helpers/types';
 
-type ModalSelectProjectProps = {
-    isSelectProjectOpen: boolean;
-    setIsSelectProjectOpen: React.Dispatch<React.SetStateAction<boolean>>;
+type ModalSelectNamespaceProps = {
+    isSelectNamespaceOpen: boolean;
+    setIsSelectNamespaceOpen: React.Dispatch<React.SetStateAction<boolean>>;
     namespaces: Namespace[];
 };
 
-export default function ModalSelectProject(props: ModalSelectProjectProps) {
-    const { isSelectProjectOpen, setIsSelectProjectOpen } = props;
+export default function ModalSelectNamespace(props: ModalSelectNamespaceProps) {
+    const { isSelectNamespaceOpen, setIsSelectNamespaceOpen } = props;
 
     return (
         <>
-            <Transition appear show={isSelectProjectOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-50" onClose={() => setIsSelectProjectOpen(false)}>
+            <Transition appear show={isSelectNamespaceOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={() => setIsSelectNamespaceOpen(false)}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"

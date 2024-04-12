@@ -5,14 +5,14 @@ import { formatDateClient } from '~/helpers/date';
 import { Form } from '@remix-run/react';
 import { Build } from '~/helpers/types';
 
-type ModalSelectProjectProps = {
+type ModalConfirmRestoreProps = {
     isConfirmRestoreOpen: boolean;
     setIsConfirmRestoreOpen: React.Dispatch<React.SetStateAction<boolean>>;
     restoreBuild: Build | null;
     pd: { builds: Build[]; github: { organization: string; repository: string } };
 };
 
-export default function ModalConfirmRestore(props: ModalSelectProjectProps) {
+export default function ModalConfirmRestore(props: ModalConfirmRestoreProps) {
     const { isConfirmRestoreOpen, setIsConfirmRestoreOpen, restoreBuild: build, pd } = props;
 
     return (

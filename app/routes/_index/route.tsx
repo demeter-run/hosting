@@ -3,7 +3,7 @@ import { Link, json, useFetcher, useNavigation } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { getWalletAddress, useConnectWallet, WalletModal } from '@newm.io/cardano-dapp-wallet-connector';
 import { LogoHover } from '~/fragments/icons';
-import ModalSelectProject from './modal-select-project';
+import ModalSelectNamespace from './modal-select-namespace';
 import { getNamespaces } from '~/server/mint.server';
 import { PageLoader } from '~/fragments/page-loader';
 import { Namespace } from '~/helpers/types';
@@ -29,7 +29,7 @@ export default function Index() {
     const fetcher = useFetcher();
     const [walletAddress, setWalletAddress] = useState('');
     const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
-    const [isSelectProjectOpen, setIsSelectProjectOpen] = useState(false);
+    const [isSelectNamespaceOpen, setIsSelectNamespaceOpen] = useState(false);
     const [namespaces, setNamespaces] = useState<Namespace[]>([]);
     const { state } = useNavigation();
 
@@ -70,7 +70,7 @@ export default function Index() {
         <>
             {state === 'loading' && <PageLoader />}
             <WalletModal isOpen={isWalletModalOpen} onClose={() => setIsWalletModalOpen(false)} />
-            <ModalSelectProject isSelectProjectOpen={isSelectProjectOpen} setIsSelectProjectOpen={setIsSelectProjectOpen} namespaces={namespaces} />
+            <ModalSelectNamespace isSelectNamespaceOpen={isSelectNamespaceOpen} setIsSelectNamespaceOpen={setIsSelectNamespaceOpen} namespaces={namespaces} />
 
             {/* Navbar */}
             <header className="h-20 w-full fixed top-0 right-0 z-30 bg-white/90 backdrop-blur-sm">
@@ -127,7 +127,7 @@ export default function Index() {
                     ) : (
                         <>
                             {namespaces.length > 0 ? (
-                                <button className="btn-primary-large mt-8" onClick={() => setIsSelectProjectOpen(true)}>
+                                <button className="btn-primary-large mt-8" onClick={() => setIsSelectNamespaceOpen(true)}>
                                     Select namespace
                                 </button>
                             ) : (
