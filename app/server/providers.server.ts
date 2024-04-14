@@ -42,15 +42,19 @@ export async function getPageData(): Promise<PageTypes> {
     };
 }
 
-type UpdateProviderPayload = {
-    providerId: string;
-    enabled: boolean;
-};
-
-export async function updateProvider(payload: UpdateProviderPayload) {
-    const { providerId, enabled } = payload;
-    console.log(enabled);
+export async function handlePageAction(data: FormData) {
+    const intent = data.get('intent') as string;
+    // If checked is true, enable provider, if false, disable provider
+    const checked = data.get('checked') as string;
+    const providerId = data.get('providerId') as string;
     console.log(providerId);
-    // When the promise is resolved the loader will re-run and the UI will update
-    await mockApiCall();
+    console.log(checked);
+    switch (intent) {
+        case 'update_provider_status':
+            await mockApiCall();
+            // When the promise is resolved the loader will re-run and the UI will update
+            return null;
+        default:
+            return null;
+    }
 }

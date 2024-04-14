@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, json, type MetaFunction } from '@remix-run/node';
 import { useFetcher, useLoaderData } from '@remix-run/react';
 import invariant from '~/helpers/invariant';
-import { getPageData, updateProvider } from '~/server/providers.server';
+import { getPageData, handlePageAction } from '~/server/providers.server';
 import CardProvider from './card-provider';
 import { PageLoader } from '~/fragments/page-loader';
 import { useMemo } from 'react';
@@ -18,11 +18,8 @@ export async function loader() {
 
 export async function action({ request }: ActionFunctionArgs) {
     const data = await request.formData();
-    const providerId = data.get('providerId') as string;
-    const checked = data.get('checked') as string;
-
-    await updateProvider({ providerId, enabled: checked === 'true' });
-    return null;
+    const result = await handlePageAction(data);
+    return json({ result });
 }
 
 export default function Providers() {
@@ -31,7 +28,7 @@ export default function Providers() {
     const fetcherRunning = useMemo(() => fetcher.state === 'loading' || fetcher.state === 'submitting', [fetcher.state]);
 
     const handleProviderChange = (checked: boolean, providerId: number) => {
-        fetcher.submit({ providerId, checked }, { method: 'POST' });
+        fetcher.submit({ intent: 'update_provider_status', providerId, checked }, { method: 'POST' });
     };
 
     return (
