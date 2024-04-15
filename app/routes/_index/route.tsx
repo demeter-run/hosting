@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { getWalletAddress, useConnectWallet, WalletModal } from '@newm.io/cardano-dapp-wallet-connector';
 import { LogoHover } from '~/fragments/icons';
 import ModalSelectNamespace from './modal-select-namespace';
-import { getNamespaces } from '~/server/mint.server';
 import { PageLoader } from '~/fragments/page-loader';
 import { Namespace } from '~/helpers/types';
+import { handlePageAction } from '~/server/landing.server';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Demeter Hosting' }, { name: 'description', content: 'Demeter Hosting' }];
@@ -14,14 +14,8 @@ export const meta: MetaFunction = () => {
 
 export async function action({ request }: ActionFunctionArgs) {
     const data = await request.formData();
-    const intent = data.get('intent') as string;
-
-    // Gets namespaces for the wallet address
-    if (intent === 'get_namespaces') {
-        const address = data.get('address') as string;
-        const namespaces = await getNamespaces(address);
-        return json({ intent, namespaces });
-    }
+    const result = await handlePageAction(data);
+    return json(result);
 }
 
 export default function Index() {
@@ -70,7 +64,11 @@ export default function Index() {
         <>
             {state === 'loading' && <PageLoader />}
             <WalletModal isOpen={isWalletModalOpen} onClose={() => setIsWalletModalOpen(false)} />
-            <ModalSelectNamespace isSelectNamespaceOpen={isSelectNamespaceOpen} setIsSelectNamespaceOpen={setIsSelectNamespaceOpen} namespaces={namespaces} />
+            <ModalSelectNamespace
+                isSelectNamespaceOpen={isSelectNamespaceOpen}
+                setIsSelectNamespaceOpen={setIsSelectNamespaceOpen}
+                namespaces={namespaces}
+            />
 
             {/* Navbar */}
             <header className="h-20 w-full fixed top-0 right-0 z-30 bg-white/90 backdrop-blur-sm">
