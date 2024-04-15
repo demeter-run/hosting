@@ -3,7 +3,7 @@ import { useLoaderData } from '@remix-run/react';
 import { BranchIcon, CommitIcon } from '~/fragments/icons';
 import { formatDateClient } from '~/helpers/date';
 import invariant from '~/helpers/invariant';
-import { getPageData, updateProdBuild } from '~/server/builds.server';
+import { getPageData, handlePageAction } from '~/server/builds.server';
 import ModalConfirmRestore from './modal-confirm-restore';
 import { useState } from 'react';
 import { Build } from '~/helpers/types';
@@ -20,10 +20,8 @@ export async function loader() {
 
 export async function action({ request }: ActionFunctionArgs) {
     const data = await request.formData();
-    const buildId = data.get('buildId') as string;
-
-    await updateProdBuild({ buildId, enabled: true });
-    return null;
+    const result = await handlePageAction(data);
+    return json(result);
 }
 
 export default function Builds() {

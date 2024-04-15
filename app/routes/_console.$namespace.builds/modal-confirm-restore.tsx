@@ -76,6 +76,7 @@ export default function ModalConfirmRestore(props: ModalConfirmRestoreProps) {
                                             {build && formatDateClient(new Date(build.timestamp), 'medium', 'short')} by {build?.author}
                                         </div>
                                         <Form method="post">
+                                            <input type="hidden" name="intent" value={'set_production_build'} />
                                             <input type="hidden" name="buildId" value={build?.id} />
                                             <button className="btn-primary mt-8" type="submit" onClick={() => setIsConfirmRestoreOpen(false)}>
                                                 Restore

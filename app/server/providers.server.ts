@@ -44,16 +44,18 @@ export async function getPageData(): Promise<PageTypes> {
 
 export async function handlePageAction(data: FormData) {
     const intent = data.get('intent') as string;
-    // If checked is true, enable provider, if false, disable provider
-    const checked = data.get('checked') as string;
-    const providerId = data.get('providerId') as string;
-    console.log(providerId);
-    console.log(checked);
+    console.log(intent);
     switch (intent) {
-        case 'update_provider_status':
+        case 'update_provider_status': {
+            // If enable is true, enable provider, if false, disable provider
+            const enable = data.get('checked') as string;
+            const providerId = data.get('providerId') as string;
+            console.log(providerId);
+            console.log(enable);
             await mockApiCall();
             // When the promise is resolved the loader will re-run and the UI will update
             return null;
+        }
         default:
             return null;
     }

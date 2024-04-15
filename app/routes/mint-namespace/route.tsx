@@ -4,47 +4,31 @@ import { getWalletAddress, getWalletBalance, useConnectWallet, WalletModal } fro
 import { CheckCircleIcon, LogoHover, SpinnerIcon, XCircleIcon } from '~/fragments/icons';
 import { Link, json, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
 import WalletNotFound from '~/fragments/wallet-not-found';
-import { checkAvailability, getTxCbor, getTxStatus } from '~/server/mint.server';
+import { getPageData, handlePageAction } from '~/server/mint.server';
+import invariant from '~/helpers/invariant';
 
 export const meta: MetaFunction = () => {
-    return [{ title: 'Demeter Hosting' }, { name: 'description', content: 'Demeter Hosting' }];
+    return [{ title: 'Mint namespace - Demeter Hosting' }, { name: 'description', content: 'Mint namespace - Demeter Hosting' }];
 };
 
 export async function loader({ request }: { request: Request }) {
-    // If there is a tx hash in the URL, get the transaction status on page load
+    // Check for a tx sash in the URL
     const url = new URL(request.url);
     const searchParams = new URLSearchParams(url.search);
     const txHash = searchParams.get('hash');
-    if (!txHash) return json({ txHash: null, txStatus: null });
-    const txStatus = await getTxStatus(txHash);
-    return json({ txHash, txStatus });
+    // If no hash in the URL, return null
+    if (!txHash) return json({ pageData: { txHash: null, txStatus: null } });
+    // If there is a tx hash in the URL, get the transaction status
+    const pageData = await getPageData(txHash);
+    invariant(pageData, 'Failed to load page data');
+    console.log('dada: ', pageData);
+    return json({ pageData });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
     const data = await request.formData();
-    const intent = data.get('intent') as string;
-
-    // Fetches availability of namespace from server
-    if (intent === 'check_availability') {
-        const namespace = data.get('namespace') as string;
-        const isAvailable = await checkAvailability(namespace);
-        return json({ intent, isAvailable });
-    }
-
-    // Fetches transaction cbor from server
-    if (intent === 'get_cbor') {
-        const namespace = data.get('namespace') as string;
-        const address = data.get('address') as string;
-        const cbor = await getTxCbor(namespace, address);
-        return json({ intent, cbor });
-    }
-
-    // Fetches transaction status from server
-    if (intent === 'get_tx_status') {
-        const hash = data.get('hash') as string;
-        const txStatus = await getTxStatus(hash);
-        return json({ intent, txStatus });
-    }
+    const result = await handlePageAction(data);
+    return json(result);
 }
 
 export default function MintNamespace() {
@@ -60,8 +44,9 @@ export default function MintNamespace() {
     const [walletAddress, setWalletAddress] = useState('');
     const [namespace, setNamespace] = useState('');
     const [txCbor, setTxCbor] = useState('');
-    const { txHash, txStatus } = useLoaderData<typeof loader>();
     const fetcherRunning = useMemo(() => fetcher.state === 'loading' || fetcher.state === 'submitting', [fetcher.state]);
+    // const { txHash, txStatus } = useLoaderData<typeof loader>();
+    const { pageData: pd } = useLoaderData<typeof loader>();
 
     // Fetches wallet data on wallet connection
     useEffect(() => {
@@ -91,8 +76,8 @@ export default function MintNamespace() {
                     break;
                 case 'get_tx_status':
                     responseTxStatus = (fetcher.data as { txStatus: 'pending' | 'confirmed' | 'expired' }).txStatus;
+                    console.log('fetcher response inside', responseTxStatus);
                     setStep(responseTxStatus);
-                    console.log('fetcher response outside');
                     if (responseTxStatus === 'confirmed' || responseTxStatus === 'expired') {
                         console.log('Tx status confirmed or expired clearing interval');
                         clearInterval(txStatusInterval.current as NodeJS.Timeout);
@@ -104,20 +89,20 @@ export default function MintNamespace() {
 
     // Listens to transactions hash in the URL and sets status, trigger polling if pending
     useEffect(() => {
-        if (txStatus) {
+        if (pd.txStatus) {
             console.log('Tx status effect');
-            setStep(txStatus);
-            if (txStatus === 'pending') {
+            setStep(pd.txStatus);
+            if (pd.txStatus === 'pending') {
                 console.log('Tx inside pending');
                 clearInterval(txStatusInterval.current as NodeJS.Timeout);
                 txStatusInterval.current = setInterval(async () => {
                     console.log('Tx status interval');
-                    fetcher.submit({ intent: 'get_tx_status', hash: txHash }, { method: 'POST' });
+                    fetcher.submit({ intent: 'get_tx_status', hash: pd.txHash }, { method: 'POST' });
                 }, 5000);
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [txHash]);
+    }, [pd.txHash]);
 
     // Handles namespace input change and triggers server side search for availability
     const handleNamespaceInputChange = (e: { target: { value: string } }) => {
@@ -129,7 +114,7 @@ export default function MintNamespace() {
         } else {
             setAvailability('searching');
             searchTimeout.current = setTimeout(async () => {
-                fetcher.submit({ intent: 'check_availability', hash: newNamespace }, { method: 'POST' });
+                fetcher.submit({ intent: 'check_availability', namespace: newNamespace }, { method: 'POST' });
             }, 1000);
         }
         return () => searchTimeout.current && clearTimeout(searchTimeout.current);
@@ -146,7 +131,7 @@ export default function MintNamespace() {
         setStep('submitting');
         let signedTx: string;
         let txHash: string;
-        // Sign transaction with wallet TODO: Uncomment when implemented
+        // Sign transaction with wallet
         try {
             signedTx = await wallet?.signTx(txCbor);
         } catch (error) {
@@ -155,7 +140,7 @@ export default function MintNamespace() {
             return;
         }
         console.log('Signed transaction:', signedTx);
-        // Send signed transaction to the network TODO: Uncomment when implemented
+        // Send signed transaction to the network
         try {
             txHash = await wallet?.submitTx(signedTx);
         } catch (error) {
@@ -247,7 +232,11 @@ export default function MintNamespace() {
                                     </div>
                                 )}
                             </div>
-                            <button className="btn-primary mt-8" onClick={() => handleReviewDetails()} disabled={availability !== 'available' || fetcherRunning}>
+                            <button
+                                className="btn-primary mt-8"
+                                onClick={() => handleReviewDetails()}
+                                disabled={availability !== 'available' || fetcherRunning}
+                            >
                                 Review details
                             </button>
                         </div>
@@ -324,7 +313,7 @@ export default function MintNamespace() {
                     <div className="text-center">
                         <SpinnerIcon className="w-16 animate-spin mx-auto text-accent1" />
                         <h3 className="title-2xl mt-4">Transaction submitted, verifying on the blockchain.</h3>
-                        <div className="text-sm mt-4">{txHash}</div>
+                        <div className="text-sm mt-4">{pd.txHash}</div>
                     </div>
                 )}
 
@@ -334,7 +323,7 @@ export default function MintNamespace() {
                         <div className="">
                             <XCircleIcon className="w-20 text-red1 mx-auto" />
                             <h3 className="title-2xl mt-4">There was an error processing your transaction</h3>
-                            <div className="text-sm mt-4">{txHash}</div>
+                            <div className="text-sm mt-4">{pd.txHash}</div>
                         </div>
                         <button className="btn-primary mt-8 mx-auto" onClick={() => setStep('mint')}>
                             Try again
@@ -348,7 +337,7 @@ export default function MintNamespace() {
                         <div className="">
                             <XCircleIcon className="w-20 text-red1 mx-auto" />
                             <h3 className="title-2xl mt-4">Transaction expired</h3>
-                            <div className="text-sm mt-4">{txHash}</div>
+                            <div className="text-sm mt-4">{pd.txHash}</div>
                         </div>
                         <button
                             className="btn-primary mt-8 mx-auto"
@@ -368,7 +357,7 @@ export default function MintNamespace() {
                         <div className="">
                             <CheckCircleIcon className="w-20 text-green1 mx-auto" />
                             <h3 className="title-2xl mt-4">Congratulations! Your namespace is minted.</h3>
-                            <div className="text-sm mt-4">{txHash}</div>
+                            <div className="text-sm mt-4">{pd.txHash}</div>
                         </div>
                         <Link className="btn-primary mt-8 mx-auto" to="/console">
                             Go to console

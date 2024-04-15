@@ -19,7 +19,7 @@ export async function loader() {
 export async function action({ request }: ActionFunctionArgs) {
     const data = await request.formData();
     const result = await handlePageAction(data);
-    return json({ result });
+    return json(result);
 }
 
 export default function Providers() {
@@ -28,7 +28,7 @@ export default function Providers() {
     const fetcherRunning = useMemo(() => fetcher.state === 'loading' || fetcher.state === 'submitting', [fetcher.state]);
 
     const handleProviderChange = (checked: boolean, providerId: number) => {
-        fetcher.submit({ intent: 'update_provider_status', providerId, checked }, { method: 'POST' });
+        fetcher.submit({ intent: 'update_provider_status', providerId, enable: checked }, { method: 'POST' });
     };
 
     return (
