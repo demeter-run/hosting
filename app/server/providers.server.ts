@@ -1,59 +1,62 @@
 import { mockApiCall } from '~/helpers/misc';
+import { Provider } from '~/helpers/types';
 
-export type Provider = {
-    id: number;
-    name: string;
-    location: string;
-    logo: string;
-    features?: string[];
-    supportLink?: string;
-    isEnabled: boolean;
+type PageTypes = {
+    providers: Provider[];
 };
 
-export async function getProviders(): Promise<Provider[]> {
+export async function getPageData(): Promise<PageTypes> {
     await mockApiCall();
-    return [
-        {
-            id: 1,
-            name: 'TxPipe',
-            location: 'US Central',
-            logo: '/assets/logos/txpipe.svg',
-            features: [
-                'Cardano Node',
-                'DB-Sync',
-                'Webhooks',
-                'Ogmios',
-                'Kupo',
-                'Submit Api',
-                'Blockfrost RYO',
-                'Kuber',
-                'Marlowe Runtime',
-                'GraphQL',
-                'UTxO RPC',
-            ],
-            supportLink: 'https://discord.gg/ZTHcHUy5HY',
-            isEnabled: true,
-        },
-        {
-            id: 2,
-            name: 'Blink Labs',
-            location: 'US Central',
-            logo: '/assets/logos/blink-labs.svg',
-            features: ['Cardano Node', 'DB-Sync', 'Ogmios', 'Kupo', 'Blockfrost RYO'],
-            isEnabled: false,
-        },
-    ];
+    return {
+        providers: [
+            {
+                id: 1,
+                name: 'TxPipe',
+                location: 'US Central',
+                logo: '/assets/logos/txpipe.svg',
+                features: [
+                    'Cardano Node',
+                    'DB-Sync',
+                    'Webhooks',
+                    'Ogmios',
+                    'Kupo',
+                    'Submit Api',
+                    'Blockfrost RYO',
+                    'Kuber',
+                    'Marlowe Runtime',
+                    'GraphQL',
+                    'UTxO RPC',
+                ],
+                supportLink: 'https://discord.gg/ZTHcHUy5HY',
+                isEnabled: true,
+            },
+            {
+                id: 2,
+                name: 'Blink Labs',
+                location: 'US Central',
+                logo: '/assets/logos/blink-labs.svg',
+                features: ['Cardano Node', 'DB-Sync', 'Ogmios', 'Kupo', 'Blockfrost RYO'],
+                isEnabled: false,
+            },
+        ],
+    };
 }
 
-type UpdateProviderPayload = {
-    providerId: string;
-    enabled: boolean;
-};
-
-export async function updateProvider(payload: UpdateProviderPayload) {
-    const { providerId, enabled } = payload;
-    console.log(enabled);
-    console.log(providerId);
-    // When the promise is resolved the loader will re-run and the UI will update
-    await mockApiCall();
+export async function handlePageAction(data: FormData) {
+    const intent = data.get('intent') as string;
+    console.log(intent);
+    switch (intent) {
+        case 'update_provider_status': {
+            // If enable is true, enable provider, if false, disable provider
+            const enable = data.get('checked') as string;
+            const providerId = data.get('providerId') as string;
+            console.log(providerId);
+            console.log(enable);
+            await mockApiCall();
+            // When the promise is resolved the loader will re-run and the UI will update
+            return null;
+        }
+        default:
+            return null;
+    }
 }

@@ -144,6 +144,13 @@
     .tag-yellow {
         @apply tag-base bg-yellow1/10 text-yellow1;
     }
+    /* Pills */
+    .pill {
+        @apply bg-accent1/10 text-accent1 rounded-full font-mono font-medium flex text-[13px] py-[6px] px-[12px] tracking-widest;
+    }
+    .pill.active {
+        @apply bg-accent1 text-gray-100;
+    }
     /* Tables */
     .table-wrapper {
         @apply min-w-full divide-y divide-gray-100 dark:divide-gray-700;

@@ -1,21 +1,21 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { Namespace } from '~/server/mint.server';
 import { Link } from '@remix-run/react';
+import { Namespace } from '~/helpers/types';
 
-type ModalSelectProjectProps = {
-    isSelectProjectOpen: boolean;
-    setIsSelectProjectOpen: React.Dispatch<React.SetStateAction<boolean>>;
+type ModalSelectNamespaceProps = {
+    isSelectNamespaceOpen: boolean;
+    setIsSelectNamespaceOpen: React.Dispatch<React.SetStateAction<boolean>>;
     namespaces: Namespace[];
 };
 
-export default function ModalSelectProject(props: ModalSelectProjectProps) {
-    const { isSelectProjectOpen, setIsSelectProjectOpen } = props;
+export default function ModalSelectNamespace(props: ModalSelectNamespaceProps) {
+    const { isSelectNamespaceOpen, setIsSelectNamespaceOpen } = props;
 
     return (
         <>
-            <Transition appear show={isSelectProjectOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-50" onClose={() => setIsSelectProjectOpen(false)}>
+            <Transition appear show={isSelectNamespaceOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={() => setIsSelectNamespaceOpen(false)}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -41,7 +41,7 @@ export default function ModalSelectProject(props: ModalSelectProjectProps) {
                             >
                                 <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white px-4 py-10 text-left align-middle shadow-xl transition-all">
                                     <Dialog.Title as="h2" className="title-2xl ml-4">
-                                        Select project
+                                        Select namespace
                                     </Dialog.Title>
                                     <div className="mt-4 flex flex-col">
                                         {props.namespaces.map(n => (
@@ -53,7 +53,7 @@ export default function ModalSelectProject(props: ModalSelectProjectProps) {
                                             <div className="divider" />
                                         </div>
                                         <Link className="mt-4 rounded-md hover:bg-gray-100 px-4 py-3" to="/mint-namespace">
-                                            Or create new project
+                                            Or mint new namespace
                                         </Link>
                                     </div>
                                 </Dialog.Panel>

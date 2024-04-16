@@ -3,9 +3,10 @@ import { Link, json, useFetcher, useNavigation } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { getWalletAddress, useConnectWallet, WalletModal } from '@newm.io/cardano-dapp-wallet-connector';
 import { LogoHover } from '~/fragments/icons';
-import ModalSelectProject from './modal-select-project';
-import { Namespace, getNamespaces } from '~/server/mint.server';
+import ModalSelectNamespace from './modal-select-namespace';
 import { PageLoader } from '~/fragments/page-loader';
+import { Namespace } from '~/helpers/types';
+import { handlePageAction } from '~/server/landing.server';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Demeter Hosting' }, { name: 'description', content: 'Demeter Hosting' }];
@@ -13,14 +14,8 @@ export const meta: MetaFunction = () => {
 
 export async function action({ request }: ActionFunctionArgs) {
     const data = await request.formData();
-    const intent = data.get('intent') as string;
-
-    // Gets namespaces for the wallet address
-    if (intent === 'get_namespaces') {
-        const address = data.get('address') as string;
-        const namespaces = await getNamespaces(address);
-        return json({ intent, namespaces });
-    }
+    const result = await handlePageAction(data);
+    return json(result);
 }
 
 export default function Index() {
@@ -28,7 +23,7 @@ export default function Index() {
     const fetcher = useFetcher();
     const [walletAddress, setWalletAddress] = useState('');
     const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
-    const [isSelectProjectOpen, setIsSelectProjectOpen] = useState(false);
+    const [isSelectNamespaceOpen, setIsSelectNamespaceOpen] = useState(false);
     const [namespaces, setNamespaces] = useState<Namespace[]>([]);
     const { state } = useNavigation();
 
@@ -69,7 +64,11 @@ export default function Index() {
         <>
             {state === 'loading' && <PageLoader />}
             <WalletModal isOpen={isWalletModalOpen} onClose={() => setIsWalletModalOpen(false)} />
-            <ModalSelectProject isSelectProjectOpen={isSelectProjectOpen} setIsSelectProjectOpen={setIsSelectProjectOpen} namespaces={namespaces} />
+            <ModalSelectNamespace
+                isSelectNamespaceOpen={isSelectNamespaceOpen}
+                setIsSelectNamespaceOpen={setIsSelectNamespaceOpen}
+                namespaces={namespaces}
+            />
 
             {/* Navbar */}
             <header className="h-20 w-full fixed top-0 right-0 z-30 bg-white/90 backdrop-blur-sm">
@@ -126,8 +125,8 @@ export default function Index() {
                     ) : (
                         <>
                             {namespaces.length > 0 ? (
-                                <button className="btn-primary-large mt-8" onClick={() => setIsSelectProjectOpen(true)}>
-                                    Select project
+                                <button className="btn-primary-large mt-8" onClick={() => setIsSelectNamespaceOpen(true)}>
+                                    Select namespace
                                 </button>
                             ) : (
                                 <Link className="btn-primary-large mt-8" to="/mint-namespace">

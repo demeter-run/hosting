@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Switch } from '@headlessui/react';
-import { Provider } from '~/server/providers.server';
+import { Provider } from '~/helpers/types';
 
 type ProviderProps = {
     provider: Provider;

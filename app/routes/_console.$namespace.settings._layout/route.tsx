@@ -2,12 +2,12 @@ import { NavLink, Outlet, useParams } from '@remix-run/react';
 import { GasIcon, GlobeAltIcon, GlobeAmericasIcon } from '~/fragments/icons';
 
 export default function Settings() {
-    const project = useParams().project;
+    const namespace = useParams().namespace;
 
     return (
         <div className="flex flex-col md:flex-row gap-8">
             <ul className="side-menu-wrapper">
-                {getMenu(project).map(item => (
+                {getMenu(namespace).map(item => (
                     <li key={item.to}>
                         <NavLink
                             to={item.to}
@@ -26,21 +26,21 @@ export default function Settings() {
     );
 }
 
-function getMenu(project: string | undefined) {
+function getMenu(namespace: string | undefined) {
     return [
         {
             name: 'Providers',
-            to: `/${project}/settings/providers`,
+            to: `/${namespace}/settings/providers`,
             icon: <GlobeAmericasIcon className="w-4" />,
         },
         {
             name: 'Namespace',
-            to: `/${project}/settings/namespace`,
+            to: `/${namespace}/settings/namespace`,
             icon: <GlobeAltIcon className="w-4" />,
         },
         {
             name: 'Gas',
-            to: `/${project}/settings/gas`,
+            to: `/${namespace}/settings/gas`,
             icon: <GasIcon className="w-4" />,
         },
     ];
