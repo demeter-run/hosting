@@ -31,6 +31,7 @@ export type ActivityItem = {
     timestamp: string | number;
     requests: number;
     dcus: number;
+    provider: string;
 };
 
 export type Build = {
