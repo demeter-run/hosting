@@ -44,3 +44,9 @@ export type Build = {
     timestamp: string | number;
     current: boolean;
 };
+
+export type Log = {
+    timestamp: string;
+    msg: string;
+    provider: string;
+};
