@@ -1,5 +1,4 @@
 import { mockApiCall } from '~/helpers/misc';
-import { Namespace } from '~/helpers/types';
 
 type PageTypes = {
     txHash: string;

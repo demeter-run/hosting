@@ -151,6 +151,12 @@
     .pill.active {
         @apply bg-accent1 text-gray-100;
     }
+    .mini-pill {
+        @apply bg-accent1/10 text-accent1 rounded-full font-mono font-medium flex uppercase text-[10px] py-[3px] px-[8px] tracking-widest;
+    }
+    .mini-pill.active {
+        @apply bg-accent1 text-gray-100;
+    }
     /* Tables */
     .table-wrapper {
         @apply min-w-full divide-y divide-gray-100 dark:divide-gray-700;
