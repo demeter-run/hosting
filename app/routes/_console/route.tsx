@@ -2,7 +2,7 @@ import { json, redirect } from '@remix-run/node';
 import { Outlet, useLoaderData, useNavigation } from '@remix-run/react';
 import { PageLoader } from '~/fragments/page-loader';
 import invariant from '~/helpers/invariant';
-import Footer from '~/routes/_console/footer';
+import Footer from '~/fragments/footer';
 import Navbar from '~/routes/_console/navbar';
 import { getPageData } from '~/server/console.server';
 

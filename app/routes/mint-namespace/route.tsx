@@ -6,6 +6,7 @@ import { Link, json, useFetcher, useLoaderData, useNavigate } from '@remix-run/r
 import WalletNotFound from '~/fragments/wallet-not-found';
 import { getPageData, handlePageAction } from '~/server/mint.server';
 import invariant from '~/helpers/invariant';
+import Footer from '~/fragments/footer';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Mint namespace - Demeter Hosting' }, { name: 'description', content: 'Mint namespace - Demeter Hosting' }];
@@ -21,7 +22,6 @@ export async function loader({ request }: { request: Request }) {
     // If there is a tx hash in the URL, get the transaction status
     const pageData = await getPageData(txHash);
     invariant(pageData, 'Failed to load page data');
-    console.log('dada: ', pageData);
     return json({ pageData });
 }
 
@@ -45,7 +45,6 @@ export default function MintNamespace() {
     const [namespace, setNamespace] = useState('');
     const [txCbor, setTxCbor] = useState('');
     const fetcherRunning = useMemo(() => fetcher.state === 'loading' || fetcher.state === 'submitting', [fetcher.state]);
-    // const { txHash, txStatus } = useLoaderData<typeof loader>();
     const { pageData: pd } = useLoaderData<typeof loader>();
 
     // Fetches wallet data on wallet connection
@@ -76,10 +75,10 @@ export default function MintNamespace() {
                     break;
                 case 'get_tx_status':
                     responseTxStatus = (fetcher.data as { txStatus: 'pending' | 'confirmed' | 'expired' }).txStatus;
-                    console.log('fetcher response inside', responseTxStatus);
+                    // console.log('fetcher response inside', responseTxStatus);
                     setStep(responseTxStatus);
                     if (responseTxStatus === 'confirmed' || responseTxStatus === 'expired') {
-                        console.log('Tx status confirmed or expired clearing interval');
+                        // console.log('Tx status confirmed or expired clearing interval');
                         clearInterval(txStatusInterval.current as NodeJS.Timeout);
                     }
                     break;
@@ -90,13 +89,13 @@ export default function MintNamespace() {
     // Listens to transactions hash in the URL and sets status, trigger polling if pending
     useEffect(() => {
         if (pd.txStatus) {
-            console.log('Tx status effect');
+            // console.log('Tx status effect');
             setStep(pd.txStatus);
             if (pd.txStatus === 'pending') {
-                console.log('Tx inside pending');
+                // console.log('Tx inside pending');
                 clearInterval(txStatusInterval.current as NodeJS.Timeout);
                 txStatusInterval.current = setInterval(async () => {
-                    console.log('Tx status interval');
+                    // console.log('Tx status interval');
                     fetcher.submit({ intent: 'get_tx_status', hash: pd.txHash }, { method: 'POST' });
                 }, 5000);
             }
@@ -122,8 +121,14 @@ export default function MintNamespace() {
 
     // Handles review details button click, triggers server side request for transaction cbor
     const handleReviewDetails = () => {
-        console.log('Review details clicked');
         fetcher.submit({ intent: 'get_cbor', namespace: namespace, address: walletAddress }, { method: 'POST' });
+    };
+
+    const handleBackToSearch = () => {
+        setTxCbor('');
+        setNamespace('');
+        setAvailability('idle');
+        setStep('search');
     };
 
     // Handles mint confirmation, triggers tx signing and submission, navigates to transactions status page
@@ -167,7 +172,7 @@ export default function MintNamespace() {
             <WalletModal isOpen={isWalletModalOpen} onClose={() => setIsWalletModalOpen(false)} />
 
             {/* Navbar */}
-            <header className="h-20 w-full fixed top-0 right-0 z-30 bg-white/90 backdrop-blur-sm">
+            <header className="h-20 w-full fixed top-0 right-0 z-30 bg-white/90 backdrop-blur-sm border-b border-gray-50">
                 <div className="wrapper h-full flex justify-between items-center">
                     <Link className="flex items-center group" to="/">
                         <LogoHover className="w-20 md:w-36" />
@@ -186,185 +191,233 @@ export default function MintNamespace() {
                 </div>
             </header>
 
-            <div className="max-w-5xl pt-40 mx-auto">
-                {/* Search */}
-                {step === 'search' && (
-                    <div className="grid grid-cols-2 gap-16">
-                        <div className="">
-                            <h2 className="text-xl font-medium">Mint your namespace</h2>
-                            <input
-                                className="form-input mt-4"
-                                type="search"
-                                value={namespace}
-                                onChange={handleNamespaceInputChange}
-                                placeholder="namespace"
-                                name="namespace"
-                            />
-                            <div className="mt-4 label-1">Your unique URL</div>
-                            <div className="text-lg font-medium">
-                                {namespace.length > 0 ? <span className="text-accent1">{namespace}</span> : <span className="">namespace</span>}
-                                <span>.demeter.hosting</span>
-                            </div>
-                            <div className="mt-2 h-10">
-                                {availability === 'searching' && (
-                                    <div className="flex items-center text-accent1">
-                                        <div className="w-8 flex-none">
-                                            <SpinnerIcon className="w-5 animate-spin" />
-                                        </div>
-                                        <div className="">Searching</div>
-                                    </div>
-                                )}
-                                {availability === 'available' && (
-                                    <div className="flex items-center">
-                                        <div className="w-8 flex-none">
-                                            <CheckCircleIcon className="w-6 text-green1" />
-                                        </div>
-                                        <div className="text-green1">Available</div>
-                                        <div className="text-lg font-medium ml-2">₳50</div>
-                                    </div>
-                                )}
-                                {availability === 'unavailable' && (
-                                    <div className="flex items-center text-red1">
-                                        <div className="w-8 flex-none">
-                                            <XCircleIcon className="w-6" />
-                                        </div>
-                                        <div className="">Not available</div>
-                                    </div>
-                                )}
-                            </div>
-                            <button
-                                className="btn-primary mt-8"
-                                onClick={() => handleReviewDetails()}
-                                disabled={availability !== 'available' || fetcherRunning}
-                            >
-                                Review details
-                            </button>
-                        </div>
-                        <div>
-                            <h3 className="title-2xl">What is the namespace used for?</h3>
-                            <p className="mt-4 text-normal text-gray-600">
-                                The namespace represents your unique URL on the Demeter network. It is used to identify your frontend application.
-                            </p>
-                        </div>
-                    </div>
-                )}
-
-                {/* Mint */}
-                {step === 'mint' && (
-                    <div className="grid grid-cols-2 gap-16">
-                        <div className="flex flex-col h-full">
-                            <h2 className="text-xl font-medium">Confirm your transaction</h2>
-
-                            <p className="mt-4 text-normal text-gray-600">
-                                Please verify the information below. By continuing, you agree to deduct the transaction cost from your connected
-                                wallet.
-                            </p>
-
-                            <div className="grid grid-cols-2 mt-5 gap-8">
-                                <div>
-                                    <div className="label-1">Namespace</div>
+            <div className="bg-[#fafafa] dark:bg-gray-950 border-t border-b border-gray-50 dark:border-gray-600">
+                <div className="wrapper min-h-[calc(100vh-82px)] pt-32 pb-12">
+                    <div className="max-w-5xl mx-auto">
+                        {/* Search */}
+                        {step === 'search' && (
+                            <div className="grid md:grid-cols-2 gap-4 md:gap-16">
+                                <div className="content-wrapper p-6 h-96 flex flex-col">
+                                    <h2 className="title-2xl">Search for your namespace</h2>
+                                    <input
+                                        className="form-input mt-4"
+                                        type="search"
+                                        value={namespace}
+                                        onChange={handleNamespaceInputChange}
+                                        placeholder="namespace"
+                                        name="namespace"
+                                    />
+                                    <div className="mt-4 label-1">Your unique URL</div>
                                     <div className="text-lg font-medium">
-                                        <span className="text-accent1">{namespace}</span>
+                                        {namespace.length > 0 ? (
+                                            <span className="text-accent1">{namespace}</span>
+                                        ) : (
+                                            <span className="">namespace</span>
+                                        )}
                                         <span>.demeter.hosting</span>
                                     </div>
+                                    <div className="mt-2 flex-1">
+                                        {availability === 'searching' && (
+                                            <div className="flex items-center text-accent1">
+                                                <div className="w-8 flex-none">
+                                                    <SpinnerIcon className="w-5 animate-spin" />
+                                                </div>
+                                                <div className="">Searching</div>
+                                            </div>
+                                        )}
+                                        {availability === 'available' && (
+                                            <div className="flex items-center">
+                                                <div className="w-8 flex-none">
+                                                    <CheckCircleIcon className="w-6 text-green1" />
+                                                </div>
+                                                <div className="text-green1">Available</div>
+                                                <div className="text-lg font-medium ml-2">₳50</div>
+                                            </div>
+                                        )}
+                                        {availability === 'unavailable' && (
+                                            <div className="flex items-center text-red1">
+                                                <div className="w-8 flex-none">
+                                                    <XCircleIcon className="w-6" />
+                                                </div>
+                                                <div className="">Not available</div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <button
+                                        className="btn-primary flex-none"
+                                        onClick={() => handleReviewDetails()}
+                                        disabled={availability !== 'available' || fetcherRunning}
+                                    >
+                                        Review details
+                                    </button>
                                 </div>
                                 <div>
-                                    <div className="label-1">Price</div>
-                                    <div className="text-lg font-medium">₳50</div>
+                                    <h3 className="title-2xl mt-6">What is my namespace?</h3>
+                                    <p className="mt-4 text-normal text-gray-600">
+                                        The namespace represents your unique URL on the Demeter network. It is used to identify your frontend
+                                        application.
+                                    </p>
                                 </div>
-                                <div>
-                                    <div className="label-1">Connected wallet</div>
-                                    <div className="flex items-center">
-                                        <img className="w-5 mr-1" src={wallet?.icon} alt={wallet?.name} />
-                                        <div className="capitalize text-lg font-medium">{wallet?.name}</div>
+                            </div>
+                        )}
+
+                        {/* Mint */}
+                        {(step === 'mint' || step === 'submitting') && (
+                            <div className="grid md:grid-cols-2 gap-4 md:gap-16">
+                                <div className="content-wrapper p-6 h-96 flex flex-col">
+                                    <h2 className="title-2xl">Review details</h2>
+
+                                    <p className="mt-4 text-sm">
+                                        Please verify the information below. By continuing, you agree to deduct the transaction cost from your
+                                        connected wallet.
+                                    </p>
+                                    <div className="mt-5">
+                                        <div className="label-1">Namespace</div>
+                                        <div className="text-lg font-medium">
+                                            <span className="text-accent1">{namespace}</span>
+                                            <span>.demeter.hosting</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex mt-4 gap-8">
+                                        <div>
+                                            <div className="label-1">Wallet</div>
+                                            <div className="flex items-center">
+                                                <img className="w-5 mr-1" src={wallet?.icon} alt={wallet?.name} />
+                                                <div className="capitalize text-lg font-medium">{wallet?.name}</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="label-1">Balance</div>
+                                            <div className="text-lg font-medium">₳{walletBalance}</div>
+                                        </div>
+                                        <div>
+                                            <div className="label-1">Price</div>
+                                            <div className="text-lg font-medium">₳50</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex-1"></div>
+                                    <div className="flex gap-4">
+                                        <button className="btn-primary flex-none" onClick={handleMintNamespace} disabled={step === 'submitting'}>
+                                            Confirm
+                                        </button>
+                                        <button className="btn-secondary flex-none" onClick={handleBackToSearch} disabled={step === 'submitting'}>
+                                            Back
+                                        </button>
+                                        {step === 'submitting' && (
+                                            <div className="flex items-center gap-2">
+                                                <SpinnerIcon className="w-5 animate-spin text-accent1" />
+                                                <div className="text-sm">Submitting</div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="label-1">Wallet balance</div>
-                                    <div className="text-lg font-medium">₳{walletBalance}</div>
+                                    <h3 className="title-2xl mt-6">Minting your namespace</h3>
+                                    <p className="mt-4 text-normal text-gray-600">
+                                        By minting your namespace, you are securing your unique URL on the Demeter network. This will allow you to
+                                        deploy your frontend application to the network..
+                                    </p>
                                 </div>
                             </div>
+                        )}
 
-                            <div className="flex-1"></div>
-                            <button className="btn-primary mt-8" onClick={() => handleMintNamespace()}>
-                                Mint namespace
-                            </button>
-                        </div>
-                        <div>
-                            <h3 className="title-2xl">Minting your NFT</h3>
-                            <p className="mt-4 text-normal text-gray-600">
-                                By minting your namespace, you are securing your unique URL on the Demeter network. This will allow you to deploy your
-                                frontend application to the network..
-                            </p>
-                        </div>
-                    </div>
-                )}
+                        {/* Pending */}
+                        {step === 'pending' && (
+                            <div className="grid md:grid-cols-2 gap-4 md:gap-16">
+                                <div className="content-wrapper p-6 h-96 flex flex-col">
+                                    <h2 className="title-2xl">Transaction submitted</h2>
+                                    <div className="label-1 mt-4">Transaction hash</div>
+                                    <div className="text-sm break-words mt-1">{pd.txHash}</div>
+                                    <div className="mt-4 flex-1 flex flex-col items-center justify-center border border-gray-100 bg-gray-50 rounded-md">
+                                        <SpinnerIcon className="w-16 animate-spin mx-auto text-accent1" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className="title-2xl mt-6">Verifying transaction</h3>
+                                    <p className="mt-4 text-normal text-gray-600">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet purus nec odio ultricies.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
 
-                {/* Submitting */}
-                {step === 'submitting' && (
-                    <div className="text-center">
-                        <SpinnerIcon className="w-16 animate-spin mx-auto text-accent1" />
-                        <h3 className="title-2xl mt-4">Submitting transaction to the network</h3>
-                    </div>
-                )}
+                        {/* Fail */}
+                        {step === 'fail' && (
+                            <div className="grid md:grid-cols-2 gap-4 md:gap-16">
+                                <div className="content-wrapper p-6 h-96 flex flex-col">
+                                    <h2 className="title-2xl">Transaction failed</h2>
+                                    <div className="label-1 mt-4">Transaction hash</div>
+                                    <div className="text-sm break-words mt-1">{pd.txHash}</div>
+                                    <div className="mt-4 flex-1 flex flex-col items-center justify-center border border-gray-100 bg-gray-50 rounded-md">
+                                        <XCircleIcon className="w-20 text-red1 mx-auto" />
+                                    </div>
+                                    <button className="btn-primary mt-8" onClick={handleBackToSearch}>
+                                        Try again
+                                    </button>
+                                </div>
+                                <div>
+                                    <h3 className="title-2xl mt-6">There was an error processing your transaction</h3>
+                                    <p className="mt-4 text-normal text-gray-600">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet purus nec odio ultricies.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
 
-                {/* Pending */}
-                {step === 'pending' && (
-                    <div className="text-center">
-                        <SpinnerIcon className="w-16 animate-spin mx-auto text-accent1" />
-                        <h3 className="title-2xl mt-4">Transaction submitted, verifying on the blockchain.</h3>
-                        <div className="text-sm mt-4">{pd.txHash}</div>
-                    </div>
-                )}
+                        {/* Expired */}
+                        {step === 'expired' && (
+                            <div className="grid md:grid-cols-2 gap-4 md:gap-16">
+                                <div className="content-wrapper p-6 h-96 flex flex-col">
+                                    <h2 className="title-2xl">Transaction expired</h2>
+                                    <div className="label-1 mt-4">Transaction hash</div>
+                                    <div className="text-sm break-words mt-1">{pd.txHash}</div>
+                                    <div className="mt-4 flex-1 flex flex-col items-center justify-center border border-gray-100 bg-gray-50 rounded-md">
+                                        <XCircleIcon className="w-20 text-red1 mx-auto" />
+                                    </div>
+                                    <button className="btn-primary mt-8" onClick={handleBackToSearch}>
+                                        Try again
+                                    </button>
+                                </div>
+                                <div>
+                                    <h3 className="title-2xl mt-6">Transaction exceeded max time</h3>
+                                    <p className="mt-4 text-normal text-gray-600">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet purus nec odio ultricies.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
 
-                {/* Fail */}
-                {step === 'fail' && (
-                    <div className="text-center">
-                        <div className="">
-                            <XCircleIcon className="w-20 text-red1 mx-auto" />
-                            <h3 className="title-2xl mt-4">There was an error processing your transaction</h3>
-                            <div className="text-sm mt-4">{pd.txHash}</div>
-                        </div>
-                        <button className="btn-primary mt-8 mx-auto" onClick={() => setStep('mint')}>
-                            Try again
-                        </button>
+                        {/* Confirmed */}
+                        {step === 'confirmed' && (
+                            <div className="grid md:grid-cols-2 gap-4 md:gap-16">
+                                <div className="content-wrapper p-6 h-96 flex flex-col">
+                                    <h2 className="title-2xl">Transaction confirmed</h2>
+                                    <div className="label-1 mt-4">Transaction hash</div>
+                                    <div className="text-sm break-words mt-1">
+                                        {pd.txHash}53c44b2f2a8622fbcbf3a8e44cf7479e9cb4e17f5d223b79a7c4ec9cf8c9ffbb
+                                    </div>
+                                    <div className="mt-4 flex-1 flex flex-col items-center justify-center border border-gray-100 bg-gray-50 rounded-md">
+                                        <CheckCircleIcon className="w-20 text-green1 mx-auto" />
+                                    </div>
+                                    <button className="btn-primary mt-8" onClick={handleBackToSearch}>
+                                        Try again
+                                    </button>
+                                </div>
+                                <div>
+                                    <h3 className="title-2xl mt-6">Congratulations! Your namespace is minted.</h3>
+                                    <p className="mt-4 text-normal text-gray-600">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet purus nec odio ultricies.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
-
-                {/* Expired */}
-                {step === 'expired' && (
-                    <div className="text-center">
-                        <div className="">
-                            <XCircleIcon className="w-20 text-red1 mx-auto" />
-                            <h3 className="title-2xl mt-4">Transaction expired</h3>
-                            <div className="text-sm mt-4">{pd.txHash}</div>
-                        </div>
-                        <button
-                            className="btn-primary mt-8 mx-auto"
-                            onClick={() => {
-                                setStep('mint');
-                                navigate('/mint-namespace');
-                            }}
-                        >
-                            Try again
-                        </button>
-                    </div>
-                )}
-
-                {/* Confirmed */}
-                {step === 'confirmed' && (
-                    <div className="text-center">
-                        <div className="">
-                            <CheckCircleIcon className="w-20 text-green1 mx-auto" />
-                            <h3 className="title-2xl mt-4">Congratulations! Your namespace is minted.</h3>
-                            <div className="text-sm mt-4">{pd.txHash}</div>
-                        </div>
-                        <Link className="btn-primary mt-8 mx-auto" to="/console">
-                            Go to console
-                        </Link>
-                    </div>
-                )}
+                </div>
             </div>
+
+            <Footer />
         </>
     );
 }
