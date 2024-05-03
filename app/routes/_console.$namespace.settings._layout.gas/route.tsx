@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, json, type MetaFunction } from '@remix-run/node';
-import { useFetcher, useLoaderData, useRevalidator } from '@remix-run/react';
+import { useFetcher, useLoaderData, useParams, useRevalidator } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '~/fragments/icons';
 import { formatDateClient } from '~/helpers/date';
@@ -29,6 +29,7 @@ export default function Gas() {
     const { wallet } = useConnectWallet();
     const fetcher = useFetcher();
     const revalidator = useRevalidator();
+    const namespace = useParams().namespace || null;
     const [isTopUpOpen, setIsTopUpOpen] = useState(false);
 
     // Listens for server side responses from fetcher and updates state accordingly
@@ -69,7 +70,7 @@ export default function Gas() {
 
     function handleTopUp(dcus: number) {
         setIsTopUpOpen(false);
-        fetcher.submit({ intent: 'top_up_dcus', dcus, address: pd.address }, { method: 'POST' });
+        fetcher.submit({ intent: 'top_up_dcus', dcus, namespace }, { method: 'POST' });
     }
 
     return (

@@ -68,9 +68,9 @@ export async function handlePageAction(data: FormData) {
     switch (intent) {
         case 'top_up_dcus': {
             const dcus = data.get('dcus') as string;
-            const address = data.get('address') as string;
+            const namespace = data.get('namespace') as string;
             console.log(dcus);
-            console.log(address);
+            console.log(namespace);
             await mockApiCall();
             return {
                 intent: 'top_up_dcus',
