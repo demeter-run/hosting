@@ -19,6 +19,7 @@ export async function getPageData(): Promise<PageTypes> {
                 dcus: 3450467,
                 hash: 'f4767f352e8c6985c5da055b98dfb8f4cf456830acc809fc7ffc8676c2175e95',
                 type: 'topup',
+                txStatus: 'pending',
             },
             {
                 id: 2,
@@ -28,15 +29,33 @@ export async function getPageData(): Promise<PageTypes> {
                 dcus: 12367364,
                 hash: 'f4767f352e8c6985c5da055b98dfb8f4cf456830acc809fc7ffc8676c2175e95',
                 type: 'charge',
+                txStatus: 'confirmed',
             },
             {
                 id: 3,
+                timestamp: 1642345260000,
+                dcus: 3450467,
+                hash: 'f4767f352e8c6985c5da055b98dfb8f4cf456830acc809fc7ffc8676c2175e95',
+                type: 'topup',
+                txStatus: 'confirmed',
+            },
+            {
+                id: 4,
                 timestamp: 1642518000000,
                 provider: 'TxPipe',
                 requests: 10234,
                 dcus: 12367364,
                 hash: 'f4767f352e8c6985c5da055b98dfb8f4cf456830acc809fc7ffc8676c2175e95',
                 type: 'charge',
+                txStatus: 'confirmed',
+            },
+            {
+                id: 5,
+                timestamp: 1642345260000,
+                dcus: 3450467,
+                hash: 'f4767f352e8c6985c5da055b98dfb8f4cf456830acc809fc7ffc8676c2175e95',
+                type: 'topup',
+                txStatus: 'expired',
             },
         ],
     };
@@ -49,9 +68,9 @@ export async function handlePageAction(data: FormData) {
     switch (intent) {
         case 'top_up_dcus': {
             const dcus = data.get('dcus') as string;
-            const address = data.get('address') as string;
+            const namespace = data.get('namespace') as string;
             console.log(dcus);
-            console.log(address);
+            console.log(namespace);
             await mockApiCall();
             return {
                 intent: 'top_up_dcus',

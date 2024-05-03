@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, json, type MetaFunction } from '@remix-run/node';
-import { useFetcher, useLoaderData, useRevalidator } from '@remix-run/react';
+import { useFetcher, useLoaderData, useParams, useRevalidator } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '~/fragments/icons';
 import { formatDateClient } from '~/helpers/date';
@@ -29,6 +29,7 @@ export default function Gas() {
     const { wallet } = useConnectWallet();
     const fetcher = useFetcher();
     const revalidator = useRevalidator();
+    const namespace = useParams().namespace || null;
     const [isTopUpOpen, setIsTopUpOpen] = useState(false);
 
     // Listens for server side responses from fetcher and updates state accordingly
@@ -69,7 +70,7 @@ export default function Gas() {
 
     function handleTopUp(dcus: number) {
         setIsTopUpOpen(false);
-        fetcher.submit({ intent: 'top_up_dcus', dcus, address: pd.address }, { method: 'POST' });
+        fetcher.submit({ intent: 'top_up_dcus', dcus, namespace }, { method: 'POST' });
     }
 
     return (
@@ -103,6 +104,7 @@ export default function Gas() {
                             <th className="table-th"></th>
                             <th className="table-th">Time</th>
                             <th className="table-th">Type</th>
+                            <th className="table-th whitespace-nowrap">Tx Status</th>
                             <th className="table-th text-right">Dcus</th>
                             <th className="table-th text-right">Requests</th>
                             <th className="table-th">Provider</th>
@@ -114,13 +116,22 @@ export default function Gas() {
                             <tr key={l.id} className="table-tr">
                                 <td className="table-td">
                                     {l.type === 'topup' ? (
-                                        <ArrowLongRightIcon className="w-6 text-green-500" />
+                                        <ArrowLongRightIcon className="w-6 text-green1" />
                                     ) : (
-                                        <ArrowLongLeftIcon className="w-6 text-red-500" />
+                                        <ArrowLongLeftIcon className="w-6 text-red1" />
                                     )}
                                 </td>
                                 <td className="table-td">{formatDateClient(new Date(l.timestamp), 'short', 'short')}</td>
                                 <td className="table-td">{TRANSACTION_TYPES[l.type]}</td>
+                                <td className="table-td">
+                                    <span
+                                        className={
+                                            l.txStatus === 'confirmed' ? 'text-green1' : l.txStatus === 'pending' ? 'text-yellow1' : 'text-red1'
+                                        }
+                                    >
+                                        {l.txStatus}
+                                    </span>
+                                </td>
                                 <td className="table-td text-right">{l.dcus.toLocaleString('en-US')}</td>
                                 <td className="table-td text-right">{l.requests && l.requests.toLocaleString('en-US')}</td>
                                 <td className="table-td">{l.provider && l.provider}</td>
