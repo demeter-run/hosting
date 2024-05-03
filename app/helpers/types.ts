@@ -14,6 +14,7 @@ export type gasLedgerItem = {
     requests?: number;
     hash: string;
     type: string;
+    txStatus: 'pending' | 'confirmed' | 'expired';
 };
 
 export type Provider = {
